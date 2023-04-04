@@ -1,4 +1,4 @@
-import { Button, CardContent, Divider, Grid, IconButton, Input, InputAdornment, InputBase, InputLabel, ListItem, MenuItem, Paper, Tab, Tabs, TextField } from "@mui/material";
+import { Button, CardContent, Divider, Grid, IconButton, Input, InputAdornment, InputBase, InputLabel, ListItem, MenuItem, Paper, Tab, Tabs, TextField, Tooltip } from "@mui/material";
 import React from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Contenido } from "./Home";
@@ -16,7 +16,7 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
             tabValue: 0,
             buscarTexto: "",
             buscarTextoClone: "",
-            buscarSeleccionar: "code",
+            buscarSeleccionar: "codeResultPorAtend",
             buscarSeleccionarClone: "",
         };
     }
@@ -43,9 +43,16 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
         });
     };
 
+    actualizar = () => {
+        this.setState({
+            buscarTextoClone: this.state.buscarTexto
+        });
+    }
+
     render() {
         return (
-            <div className='tabla-componente card-table-general'>
+            <Paper sx={{ width: '100%', mb: 18 }}>
+            <div className='tabla-componente card-table'>
                 <Contenido>
                     <div style={{ display: "flex" }} className="nav-tabla">
                         <Grid container item>
@@ -73,13 +80,11 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
                                             }
                                         }}
                                     >
-                                        <MenuItem value={"code"}>Codigo</MenuItem>
-                                        <MenuItem value={"date"}>Fecha</MenuItem>
-                                        <MenuItem value={"dni"}>DNI</MenuItem>
-                                        <MenuItem value={"passport"}>Pasaporte</MenuItem>
-                                        <MenuItem value={"nombre"}>Paciente</MenuItem>
-                                        <MenuItem value={"referencia"}>Referencia</MenuItem>
-                                        <MenuItem value={"date"}>Rango Fecha</MenuItem>
+                                        <MenuItem value={"codeResultPorAtend"}>Codigo</MenuItem>
+                                        <MenuItem value={"dniResultAtend"}>N° Documento</MenuItem>
+                                        <MenuItem value={"nombre2"}>Paciente</MenuItem>
+                                        <MenuItem value={"referente2"}>Referencia</MenuItem>
+                                        <MenuItem value={"dateResultAtend"}>Rango Fecha</MenuItem>
                                     </TextField>
                                 </div>
                                 <div className="textfield-buscar-combo">
@@ -113,11 +118,12 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
 
 
                         </Grid>
-                        <Grid container item></Grid>
                     </div>
                     <br></br>
+                    <br></br>
+                    <br></br>
                     <div>
-                        <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
+                        <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }} className="card-table-resultados">
 
                             <Tabs value={this.state.tabValue} onChange={this.handleChangeTab}
                                 indicatorColor="primary" textColor="primary" centered variant="fullWidth"
@@ -137,6 +143,7 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
                     </div>
                 </Contenido>
             </div>
+        </Paper>
         )
     }
 }

@@ -34,7 +34,6 @@ class Login extends React.Component<{ navigate: NavigateFunction, onLoadData: an
     };
     login = () => {
         Swal.showLoading()
-        console.log(this.state.email, this.state.password);
         login(this.state.email, this.state.password).then(r => {
             if (r.status) {
                 Swal.hideLoading()
@@ -51,6 +50,27 @@ class Login extends React.Component<{ navigate: NavigateFunction, onLoadData: an
 
 
     }
+
+    loginEnter = (event: any) => {
+        if (event.key === 'Enter') {
+            Swal.showLoading()
+            console.log(this.state.email, this.state.password);
+            login(this.state.email, this.state.password).then(r => {
+                if (r.status) {
+                    Swal.hideLoading()
+                    //corecto
+                    this.props.onLoadData()
+                    this.props.navigate('/apps/home');
+                    //paginado- cambiar a home
+                } else {
+                    //incorrecto- mostrar alerta
+                    Swal.fire("Error", r.message.text, "error");
+                    Swal.hideLoading()
+                }
+            });
+        }
+    };
+
 
     render() {
 
@@ -80,6 +100,7 @@ class Login extends React.Component<{ navigate: NavigateFunction, onLoadData: an
                                             id="standard-adornment-email"
                                             type={'text'}
                                             value={this.state.email}
+                                            onKeyPress={this.loginEnter}
                                             onChange={this.handleChange('email')}
                                             inputProps={{
                                                 style: {
@@ -101,6 +122,7 @@ class Login extends React.Component<{ navigate: NavigateFunction, onLoadData: an
                                         <Input
                                             type={this.state.showPassword ? 'text' : 'password'}
                                             value={this.state.password}
+                                            onKeyPress={this.loginEnter}
                                             onChange={this.handleChange('password')}
                                             inputProps={{
                                                 style: {

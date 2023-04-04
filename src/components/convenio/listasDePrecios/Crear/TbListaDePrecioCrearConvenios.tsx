@@ -5,9 +5,10 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import { Link, useParams } from "react-router-dom";
 import { visuallyHidden } from '@mui/utils';
 import { Contenido } from "../../../Home";
-import { editAgreementApi, editPriceListApi, getExaminationsAllApi, getPriceListApi, savePriceListApi } from "../../../../api";
+import { editAgreementApi, editPriceListApi, getPagedExaminationsApi, getExaminationsAllApi, getPriceListApi, savePriceListApi } from "../../../../api";
 import { isNumeric } from "../../../../util";
 import { Modal } from "@material-ui/core";
+import Swal from 'sweetalert2';
 
 export default function TbListaDePrecioCrearConvenios() {
 
@@ -153,7 +154,6 @@ export default function TbListaDePrecioCrearConvenios() {
         setOrderBy(property);
     };
 
-
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -170,30 +170,18 @@ export default function TbListaDePrecioCrearConvenios() {
 
 
     React.useEffect(() => {
-        getExaminationsAllApi().then((x: any) => {
+        getPagedExaminationsApi(0, 1000).then((x: any) => {
             setRows(x.data)
         });
     }, []);
-
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-
-
+    
+    
+    console.log(rows)
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-
 
     //#endregion
     const handleChangeNombre = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,17 +195,47 @@ export default function TbListaDePrecioCrearConvenios() {
     const handleClosePrecioConveniosError = () => {
         setAbrirGuardarPrecioConvenioError(false);
     }
-
     const editarCelda = (event: any, index: any) => {
         let aux = [...rows];
 
         aux[index].discountPrice = event.target.value;
-        setRows(aux);
 
+        setRows(aux);
     }
+
+    var convenioListPrice=()=>{
+        Swal.fire({
+            title: 'Lista de precio creada exitosamente',
+            icon: 'success',
+        })
+    }
+
+    var convenioExitPrice=()=>{
+        Swal.fire({
+            title: 'Hubo algun error al crear la lista de precio',
+            icon: 'warning',
+        })
+    }
+
+    var nameListPrice=()=>{
+        Swal.fire({
+            title: 'Ingrese el nombre la lista de precio',
+            icon: 'warning',
+        })
+    }
+
+    var priceListPrice=()=>{
+        Swal.fire({
+            title: 'Ingrese correctamente el precio',
+            icon: 'warning',
+        })
+    }
+
+
     const crear = () => {
         if (nombre == "") {
-            alert("Ingrese el nombre")
+            //alert("Ingrese el nombre")
+            nameListPrice()
             return;
         }
 
@@ -231,7 +249,8 @@ export default function TbListaDePrecioCrearConvenios() {
         });
 
         if(error){
-            alert("Ingrese correctamente el precio");
+            //alert("Ingrese correctamente el precio");
+            priceListPrice()
             return;
         }
 
@@ -242,10 +261,12 @@ export default function TbListaDePrecioCrearConvenios() {
         }).then((x: any) => {
             if (x.status) {
                 //alert(x.message.text);
-                setAbrirGuardarPrecioConvenio(true);
+                //setAbrirGuardarPrecioConvenio(true);
+                convenioListPrice()
                 window.location.href = `/apps/agreements/priceLists/${id}`
             } else {
-                alert(x.message.text);
+                //alert(x.message.text);
+                convenioExitPrice()
             }
         });
 
@@ -275,7 +296,7 @@ export default function TbListaDePrecioCrearConvenios() {
                 <br></br>
                 <div>
                     <Box sx={{ width: '100%' }}>
-                        <Paper sx={{ width: '100%', mb: 2 }} className="card-table-textField">
+                        <Paper sx={{ width: '100%', mb: 20 }} className="card-table-textField">
                             <Grid container style={{ alignItems: "center" }} spacing={1}>
                                 <Grid container item mt={2} >
                                     <Grid item xs={0.5} >
@@ -286,8 +307,8 @@ export default function TbListaDePrecioCrearConvenios() {
                                     <Grid item xs={0.5} >
                                     </Grid>
                                 </Grid>
+                                
                                 <Grid item md={12} >
-
 
                                     <TableContainer>
                                         <Table
@@ -302,9 +323,9 @@ export default function TbListaDePrecioCrearConvenios() {
                                                 onRequestSort={handleRequestSort}
                                                 rowCount={rows.length}
                                             />
+                    
                                             <TableBody>
                                                 {stableSort(rows, getComparator(order, orderBy))
-                                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                                     .map((row: any, index: any) => {
                                                         const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -329,7 +350,7 @@ export default function TbListaDePrecioCrearConvenios() {
                                                                     style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
                                                                 >
                                                                     <TextField id="outlined-basic" label="Ingresar precio (S/)"
-
+                                                                        type="number"
                                                                         variant="standard" value={row.discountPrice == undefined ? "" : row.discountPrice}
                                                                         onChange={event => editarCelda(event, index)} />
 
@@ -346,24 +367,12 @@ export default function TbListaDePrecioCrearConvenios() {
                                                         <TableCell colSpan={6} />
                                                     </TableRow>
                                                 )}
+                                                
                                             </TableBody>
+                                            
                                         </Table>
                                     </TableContainer>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 15, 20]}
-                                        component="div"
-                                        count={rows.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        labelRowsPerPage={"Filas por Pagina: "}
-                                        labelDisplayedRows={
-                                            ({ from, to, count }) => {
-                                                return '' + from + '-' + to + ' de ' + count
-                                            }
-                                        }
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
+                                  
                                 </Grid>
                             </Grid>
                         </Paper>

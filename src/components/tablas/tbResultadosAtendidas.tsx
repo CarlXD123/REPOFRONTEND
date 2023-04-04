@@ -10,14 +10,18 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { getAppointmentsApi, getEmployeeApi, getEmployeeById, getExaminationValuesByExamId, getExamValuesApi, getFilterAppointmentsApi } from '../../api';
+import { getAppointmentsApi, getEmployeeApi, getEmployeeById, getExaminationValuesByExamId, getExamValuesApi, getFilterAppointmentsApi, getAppointmentsByPersonId, getAppointmentsByReferer } from '../../api';
 import { Button, Grid, InputLabel, Modal, TextField, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from '../../img/logo-redlab.png'
-import { Label } from '@mui/icons-material';
+import logobg from '../../img/logo-redlab-bg.png'
+import { Label, Pages } from '@mui/icons-material';
 import ReactToPrint from 'react-to-print';
-import FactCheckRoundedIcon from '@mui/icons-material/FactCheckRounded';
+import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 import LocalPrintshopRoundedIcon from '@mui/icons-material/LocalPrintshopRounded';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import moment from 'moment';
+import Swal from 'sweetalert2';
 
 interface Data {
   codigo: string,
@@ -81,7 +85,8 @@ function getCurrentDate() {
   let date = new Date();
   let month = date.getMonth() + 1;
   let auxDay = date.getDate() < 10 ? "0" : "";
-  return `${date.getFullYear()}-${month}-${auxDay}${date.getDate()}`;
+  // return `${auxDay}${date.getDate()}_${month}_${date.getFullYear()}`; (dd_mm_yyyy)
+  return `${auxDay}${date.getDate()}${month}${date.getFullYear()}`; // (ddmmyyyy)
 }
 
 // This method is created for cross-browser compatibility, if you don't
@@ -236,8 +241,11 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
   const [orderBy, setOrderBy] = React.useState<string>("");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [rows, setRows] = React.useState<any>([]);
+  const [rows2, setRows2] = React.useState<any>([]);
+  const [rangeDate, setRangeDate] = React.useState<any>(false);
+  const [fechaCreacion, setFechaCreacion] = React.useState<any>('');
 
   const [abrirResultado, setAbrirResultado] = React.useState<any>(false);
 
@@ -259,11 +267,16 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
   const [correoUser, setCorreoUser] = React.useState<any>("");
   const [firma, setFirma] = React.useState<any>("");
 
-
+  const [docTitle, setDocTitle] = React.useState<any>("");
 
   const handleCloseResultado = () => {
     setAbrirResultado(false);
   }
+
+  const handleCloseRangeDate = () => {
+    setRangeDate(false);
+  }
+
   const handleAbrirResultado = async (obj: any) => {
     setAbrirResultado(true);
     setNombreCompleto(obj.nombreCompleto)
@@ -274,6 +287,7 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
     setMedico(obj.medico)
     setFecha(obj.fecha)
     setSede(obj.sede)
+    setDocTitle(obj.docTitle)
     getExamValuesApi(obj.id).then(async (y: any) => {
       let daton: any = [];
       for (let exam of y.data) {
@@ -294,7 +308,7 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
         })
       }
       setExamenLista(daton)
-      console.log(daton)
+      // console.log(daton)
 
     })
 
@@ -304,15 +318,196 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
       setDireccion(info.person.headquarter.address)
       setSedeUser(info.person.headquarter.name)
       setTelfUser(info.person.headquarter.tlfNumber)
-      setCorreoUser(info.user.email)
+      setCorreoUser(info.person.headquarter.email)
       let x = await getEmployeeApi(info.person.id)
       setFirma(x.data.person.digitalSignatureUrl)
-
+      console.log(x);
     }
 
 
-
   }
+
+  const handleChangeFechaCreacion = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaCreacion(event.target.value);
+  };
+
+  const handleChangFecha = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFecha(event.target.value);
+  };
+
+  var resultadosBusqueda = rows2.filter((elemento: any)=>{
+
+    if(opcion == "nombre2" && texto !=""){
+
+      if(elemento.pac2.toString().toLowerCase().includes(texto.toLowerCase())){
+
+        return elemento
+      }
+  
+      if(elemento.apP.toString().toLowerCase().includes(texto.toLowerCase())){
+  
+        return elemento
+      }
+  
+      if(elemento.apM.toString().toLowerCase().includes(texto.toLowerCase())){
+  
+        return elemento
+      }
+    }
+    
+  });
+
+  var resultadosBusqueda2 = rows2.filter((elemento: any)=>{
+
+    if(opcion == "dniResultAtend" && texto !=""){
+
+      if(elemento.tipoDocumento.toString().toLowerCase().includes(texto.toLowerCase())){
+
+        return elemento
+      }
+    }
+    
+  });
+
+  const filt = () => {
+    if(opcion == "dateResultAtend"){
+      setRows(busca)
+    }
+  }
+
+  var impreso=()=>{
+    Swal.fire({
+        title: 'Documento impreso',
+        icon: 'success',
+    })
+}
+
+let dateNow = moment().format('YYYY-MM-DD');
+
+const ope2 = () => {
+  getAppointmentsApi(0, 1000, "E",dateNow).then((ag: any) => {
+    let mapeado: any = []
+    ag.data?.forEach((d: any) => {
+      mapeado.push({
+        id: d.id,
+        codigo: d.code,
+        fecha: d.dateAppointmentEU,
+        fechaCreada:moment(d.createdAt).format('YYYY-MM-DD'),
+        fechaFiltro:d.dateAppointment,
+        hora: d.time12h,
+        codigoRef: d.Referer.id,
+        referencia: d.Referer.name,
+        tipoDocumento: d.client.dni,
+        pac2:d.client.name,
+        apP:d.client.lastNameP,
+        apM:d.client.lastNameM,
+        paciente: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+        precio: d.totalPrice == null ? "" : "S/. " + d.totalPrice,
+        descuento: d.discount == null ? "" : "S/. " + d.discount,
+        precioFinal: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
+
+        nombreCompleto: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+        edad: d.client.years + " años",
+        dni: d.client.dni,
+        sexo: d.client.genderStr,
+        medico: d.Doctor.name,
+        sede: d.headquarter.name
+
+      })
+    });
+    setRows(mapeado)
+  });
+
+
+  getAppointmentsApi(0, 1000, "E","").then((ag: any) => {
+    let mapeado: any = []
+    ag.data?.forEach((d: any) => {
+      mapeado.push({
+        id: d.id,
+        codigo: d.code,
+        fecha: d.dateAppointmentEU,
+        fechaCreada:moment(d.createdAt).format('YYYY-MM-DD'),
+        fechaFiltro:d.dateAppointment,
+        hora: d.time12h,
+        codigoRef: d.Referer.id,
+        referencia: d.Referer.name,
+        tipoDocumento: d.client.dni,
+        pac2:d.client.name,
+        apP:d.client.lastNameP,
+        apM:d.client.lastNameM,
+        paciente: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+        precio: d.totalPrice == null ? "" : "S/. " + d.totalPrice,
+        descuento: d.discount == null ? "" : "S/. " + d.discount,
+        precioFinal: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
+
+        nombreCompleto: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+        edad: d.client.years + " años",
+        dni: d.client.dni,
+        sexo: d.client.genderStr,
+        medico: d.Doctor.name,
+        sede: d.headquarter.name
+
+      })
+    });
+
+    
+    //setRows(mapeado)
+    setRows2(mapeado)
+  });
+
+}
+
+  var resultadosBusqueda3 = rows2.filter((elemento: any)=>{
+   
+    if(opcion == "referente2" && texto !=""){
+
+      if(elemento.referencia.toString().toLowerCase().includes(texto.toLowerCase())){
+
+        return elemento
+      }
+    }
+    
+  });
+
+  
+  var resultadosBusqueda4 = rows2.filter((elemento: any)=>{
+   
+    if(opcion == "codeResultPorAtend" && texto !=""){
+
+      if(elemento.codigo.toString().toLowerCase().includes(texto.toLowerCase())){
+
+        return elemento
+      }
+    }
+    
+  });
+
+  const ope = () => {
+    if(opcion == "dateResultAtend"){
+      setRangeDate(true);
+    }
+  }
+
+  const style2 = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 490,
+    bgcolor: 'white',
+    border: '1px solid #white',
+    borderRadius: "15px",
+    boxShadow: 24,
+    p: 4,
+  };
+
+   const busca = rows2.filter(
+    (n: any) => ( n.fechaFiltro <= fecha && n.fechaFiltro >= fechaCreacion)
+  )  
+  console.log(rows2)
+  console.log(busca)
+  console.log(fecha)
+  console.log(fechaCreacion)
 
 
   const handleRequestSort = (
@@ -325,6 +520,44 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
   };
   React.useEffect(() => {
     if (texto == "") {
+      getAppointmentsApi(0, 1000, "E", dateNow).then((ag: any) => {
+        let mapeado: any = [];
+        ag.data.forEach((d: any) => {
+          mapeado.push({
+            id: d.id,
+            codigo: d.code,
+            fecha: d.dateAppointmentEU,
+            fechaCreada:moment(d.createdAt).format('YYYY-MM-DD'),
+            fechaFiltro:d.dateAppointment,
+            hora: d.time12h,
+            codigoRef: d.Referer.id,
+            referencia: d.Referer.name,
+            tipoDocumento: d.client.dni,
+            pac2:d.client.name,
+            apP:d.client.lastNameP,
+            apM:d.client.lastNameM,
+            paciente: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+            precio: d.totalPrice == null ? "" : "S/. " + d.totalPrice,
+            descuento: d.discount == null ? "" : "S/. " + d.discount,
+            precioFinal: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
+  
+            nombreCompleto: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+            edad: d.client.years + " años",
+            dni: d.client.dni,
+            sexo: d.client.genderStr,
+            medico: d.Doctor.name,
+            sede: d.headquarter.name,
+
+            docTitle: d.code + "_" + d.client.code + "_" + d.client.name + "_" + d.client.lastNameP + "_" + d.client.lastNameM + "_" + getCurrentDate()
+
+          })
+        });
+        setRows(mapeado)
+        //setRows2(mapeado)
+      });
+    } 
+
+    if (texto == "") {
       getAppointmentsApi(0, 1000, "E", "").then((ag: any) => {
         let mapeado: any = [];
         ag.data.forEach((d: any) => {
@@ -332,50 +565,60 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
             id: d.id,
             codigo: d.code,
             fecha: d.dateAppointmentEU,
+            fechaCreada:moment(d.createdAt).format('YYYY-MM-DD'),
+            fechaFiltro:d.dateAppointment,
             hora: d.time12h,
             codigoRef: d.Referer.id,
             referencia: d.Referer.name,
-            paciente: d.client.name + " " + d.client.lastNameP,
-            precio: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
-
+            tipoDocumento: d.client.dni,
+            pac2:d.client.name,
+            apP:d.client.lastNameP,
+            apM:d.client.lastNameM,
+            paciente: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
+            precio: d.totalPrice == null ? "" : "S/. " + d.totalPrice,
+            descuento: d.discount == null ? "" : "S/. " + d.discount,
+            precioFinal: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
+  
             nombreCompleto: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
-            edad: d.client.years + "años",
+            edad: d.client.years + " años",
             dni: d.client.dni,
             sexo: d.client.genderStr,
             medico: d.Doctor.name,
-            sede: d.headquarter.name
+            sede: d.headquarter.name,
+
+            docTitle: d.code + "_" + d.client.code + "_" + d.client.name + "_" + d.client.lastNameP + "_" + d.client.lastNameM + "_" + getCurrentDate()
 
           })
         });
-        setRows(mapeado)
+        //setRows(mapeado)
+        setRows2(mapeado)
       });
-    } else {
-      getFilterAppointmentsApi(opcion, texto, "E").then((ag: any) => {
-        let mapeado: any = [];
-        ag.data.forEach((d: any) => {
-          mapeado.push({
-            id: d.id,
-            codigo: d.code,
-            fecha: d.dateAppointmentEU,
-            hora: d.time12h,
-            codigoRef: d.Referer.id,
-            referencia: d.Referer.name,
-            paciente: d.client.name + " " + d.client.lastNameP,
-            precio: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
+    } 
 
-            nombreCompleto: d.client.name + " " + d.client.lastNameP + " " + d.client.lastNameM,
-            edad: d.client.years + "años",
-            dni: d.client.dni,
-            sexo: d.client.genderStr,
-            medico: d.Doctor.name,
-            sede: d.headquarter.name
-          })
-        });
-        setRows(mapeado)
-      });
+    if(opcion == "nombre2"){
+      setRows(resultadosBusqueda)
+    }
+
+    if(opcion == "referente2"){
+       setRows(resultadosBusqueda3)
+    } 
+
+    if(opcion == "codeResultPorAtend"){
+      setRows(resultadosBusqueda4)
+    } 
+
+    if(opcion == "dniResultAtend"){
+      setRows(resultadosBusqueda2)
+    } 
+
+    if(opcion == "dateResultAtend"){
+      setRows(busca)
     }
 
   }, [texto, opcion]);
+
+  console.log(rows)
+  console.log(rows2)
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -395,6 +638,7 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
   const pageStyle = `
   @page {
     size: 210mm 297mm;
+    
   }
 
   @media all {
@@ -406,46 +650,67 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
   @media print {
     .pagebreak {
       page-break-before: always;
+      page-break-after: always !important;
+      page-break-inside: avoid !important;
+    }
+
+    .no-break-inside {
+      // apply this class to every component that shouldn't be cut off between to pages of your PDF
+      break-inside: "avoid";
+    }
+  
+    .break-before {
+      // apply this class to every component that should always display on next page
+      break-before: "always";
     }
   }
 `;
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, borderRadius: "12px" }}>
+      <Paper sx={{ width: '100%', mb: 50 }} className="card-table-resultados">
+      <br></br>
+      <div style={{ display: "flex" }}> 
+      <div style={{ paddingLeft: "5px" }}>
+        <Tooltip title="Filtro por fecha" followCursor>
+            <Button onClick={ope} variant="contained" style={{ width: '25.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.20rem" }} startIcon={<FilterAltIcon />}>
+               Filtro por fecha
+            </Button>
+        </Tooltip>
+      </div>
+      <div style={{ paddingLeft: "5px" }}>
+        <Tooltip title="Actualizar" followCursor>
+            <Button onClick={ope2} variant="contained" style={{ width: '18.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.20rem" }}>
+               Actualizar
+            </Button>
+        </Tooltip>
+      </div>
+      
+    </div>
         <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={'medium'}
-          >
+          <Table stickyHeader aria-label="sticky table">
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rows.length}        
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(rows, getComparator(order, orderBy))
+              {
+                stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any, index: any) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow
-                      hover
-                      tabIndex={-1}
-                      key={index}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                       <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                      >
-                        {row.codigo}
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                        >
+                          {row.codigo}
                       </TableCell>
                       <TableCell
                         align="left"
@@ -487,9 +752,9 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
                         <div style={{ display: "flex" }}>
                           <div style={{ paddingRight: "5px" }}>
                             <Link to={`/apps/edit/results/${row.id}`}>
-                              <Tooltip title="Asignar resultados" followCursor>
+                              <Tooltip title="Editar resultado" followCursor>
                                 <Button variant="contained" className='boton-icon'>
-                                  <FactCheckRoundedIcon />
+                                  <ModeEditRoundedIcon />
                                 </Button>
                               </Tooltip>
                             </Link>
@@ -500,7 +765,7 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
                                 <LocalPrintshopRoundedIcon />
                               </Button>
                             </Tooltip>
-                          </div>
+                          </div>  
                         </div>
                       </TableCell>
                     </TableRow>
@@ -526,7 +791,7 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 15, 20]}
+          rowsPerPageOptions={[20, 100, 200]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -541,225 +806,328 @@ export default function TbResultadosAtendidas({ texto, opcion }: any) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
       <div>
-        <Modal
-          keepMounted
-          open={abrirResultado}
-          onClose={handleCloseResultado}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
-          <Grid container  >
-            <Grid item xs={12} >
-              <Box sx={style} >
-                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Imprimir Resultados</InputLabel >
-                <Grid container item>
-                  <Grid container item
-                    style={{ overflowY: "scroll", maxHeight: "500px" }}>
-                    <Grid container item ref={(ins) => (componente = ins)}
-                      style={{ justifyContent: "center" }}>
-                      {examenLista.map((data: any, indexX: any) =>
-                        <>
-                          <div className="page-break" />
-                          <Grid container item key={indexX}
-                            style={{
-                              justifyContent: "center",
-                              background: `url(${logo}) no-repeat center center transparent`,
-                              backgroundRepeat: "no-repeat", maxWidth: "190mm", maxHeight: "270mm", minWidth: "190mm", minHeight: "270mm"
-                            }}>
-                            <Grid container item xs={10}>
-                              <Grid container item >
-                                <Grid item xs={8} ></Grid>
-                                <Grid item xs={4} >
-                                  <img src={logo} width="270em" />
+      <Modal
+        keepMounted
+        open={abrirResultado}
+        onClose={handleCloseResultado}
+        aria-labelledby="keep-mounted-modal-title"
+        aria-describedby="keep-mounted-modal-description"
+      >
+        <Grid container  >
+          <Grid item xs={12} >
+            <Box sx={style} >
+              <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Imprimir Resultados</InputLabel >
+              <Grid container item>
+                <Grid container item
+                  style={{ overflowY: "scroll", maxHeight: "500px" }}>
+                  <Grid container item ref={(ins) => (componente = ins)}
+                    style={{ justifyContent: "center" }}>
+                    {examenLista.map((data: any, indexX: any) =>
+                      <>
+                        <Grid container item key={indexX}
+                          style={{
+                            justifyContent: "center",
+                            // backgroundColor:'red',
+                            background: `url(${logobg}) no-repeat center center transparent`,
+                            backgroundRepeat: "no-repeat", 
+                            maxWidth: "204mm", 
+                            minWidth: "204mm",
+                            height: "282mm",
+                            minHeight: "281mm"                                          
+                          }}
+                         
+                        >
+                      <div style={{height: "250mm"}}></div>
+                       
+                          <Grid container item xs={11} >
+                          <Grid item xs={8} ></Grid>
+                            {/* Header */} 
+                            <Grid container item alignItems="flex-start">
+                              <Grid item xs={12}>                                
+                                <Grid container item xs={12} style={{ justifyContent: "end", marginBlock: "10px"}}>
+                                  <img src={logo} width="235em" height="100em"></img>                            
                                 </Grid>
-                              </Grid>
-                              <Grid container item >
-                                <Grid container item xs={6}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Examen:   {data.name}</InputLabel >
-                                </Grid>
-                                <Grid container item xs={6}></Grid>
-                              </Grid>
-                              <Grid container item >
                                 <Grid item xs={12}  >
-                                  <div style={{ border: '2px solid black', borderRadius: '20px', width: "770px", maxWidth: "100%" }}>
-                                    <div style={{ margin: "15px" }}>
-                                      <Grid container item >
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Paciente:</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{nombreCompleto}</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Codigo:</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{codigo}</InputLabel >
-                                        </Grid>
-                                      </Grid>
+                                  <div style={{ border: '2px solid black', borderRadius: '5px', width: "770px", maxWidth: "100%" }}>
+                                    <div style={{ marginInline: "15px", marginBlock: "1px"}}>
                                       <Grid container item mt={1}>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Edad:</InputLabel >
+                                        <Grid container item xs={8}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Paciente:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{nombreCompleto}</InputLabel >                                                                           
                                         </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{edad}</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Sede:</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{sede}</InputLabel >
+                                        
+                                        <Grid container item xs={4}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Fecha:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{fecha}</InputLabel >                                                                           
                                         </Grid>
                                       </Grid>
+
                                       <Grid container item mt={1}>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Sexo:</InputLabel >
+                                        <Grid container item xs={8}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >DNI:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{dni}</InputLabel >                                                                           
                                         </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{sexo}</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Fecha:</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{fecha}</InputLabel >
+                                        
+                                        <Grid container item xs={4}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Código:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{codigo}</InputLabel >                                                                           
                                         </Grid>
                                       </Grid>
+
                                       <Grid container item mt={1}>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Medico:</InputLabel >
+                                        <Grid container item xs={8}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Sexo:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{sexo}</InputLabel >                                                                           
                                         </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{medico}</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >DNI:</InputLabel >
-                                        </Grid>
-                                        <Grid item xs={3} >
-                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} >{dni}</InputLabel >
+                                        
+                                        <Grid container item xs={4}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Página:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{indexX+1} de {examenLista.length}</InputLabel >                                                                           
                                         </Grid>
                                       </Grid>
+                                      
+                                      <Grid container item mt={1}>
+                                        <Grid container item xs={8}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Edad:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{edad}</InputLabel >                                                                           
+                                        </Grid>
+                                        
+                                        <Grid container item xs={4}>                          
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.9rem" }} >Sede:&nbsp;</InputLabel >
+                                          <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{sede}</InputLabel >                                                                           
+                                        </Grid>
+                                      </Grid>    
                                     </div>
                                   </div>
+                                </Grid> 
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} height="15px" ></Grid>
+                                <Grid container item xs={12} style={{ justifyContent: "center", marginBlock: "8px"}}>
+                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.8rem" }} ><b>Examen:   {data.name}</b></InputLabel >                                                     
+                                </Grid> 
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} height="20px" ></Grid>
+                                <Grid container item xs={10} style={{ marginBlock: "5px"}}>
+                                  <Grid container item xs={3} style={{ justifyContent: "center" }}>
+                                  </Grid>
+                                  <Grid container item xs={2} style={{ justifyContent: "center" }}>
+                                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.8rem" }} >Resultados</InputLabel >
+                                  </Grid>
+                                  <Grid container item xs={2} style={{ justifyContent: "center" }}>
+                                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.8rem" }} >Unidades</InputLabel >
+                                  </Grid>
+                                  <Grid container item xs={3} style={{ justifyContent: "center" }} >
+                                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.8rem" }} >Rangos Referenciales</InputLabel >
+                                  </Grid>
+                                  <Grid container item xs={2} style={{ justifyContent: "center" }}>
+                                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.8rem" }} >Metodología</InputLabel >
+                                  </Grid>
                                 </Grid>
-                              </Grid>
-                              <Grid container item >
-                                <Grid container item xs={2} style={{ justifyContent: "center" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} ></InputLabel >
-                                </Grid>
-                                <Grid container item xs={2} style={{ justifyContent: "center" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Resultados</InputLabel >
-                                </Grid>
-                                <Grid container item xs={2} style={{ justifyContent: "center" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Unidades</InputLabel >
-                                </Grid>
-                                <Grid container item xs={3} style={{ justifyContent: "center" }} >
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Rangos Referenciales</InputLabel >
-                                </Grid>
-                                <Grid container item xs={3} style={{ justifyContent: "center" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >Metodoloia</InputLabel >
-                                </Grid>
-                              </Grid>
-                              <Grid container item >
-                                {
-                                  <Box>
-                                    <div>
-                                      {Object.keys(data.detalleExam).map((nombre: any, indexY: any) =>
-                                        <Grid container item key={indexY}>
-                                          <Grid container item xs={2} >
-                                            <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} ><u>{nombre}</u></div >
+
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                <Grid item xs={8} ></Grid>
+                                  {/* Contenido */}   
+                                <Grid container item xs={10}>
+                                  {
+                                    Object.keys(data.detalleExam).map((nombre: any, indexY: any) =>
+                                    <Grid container item key={indexY}>
+                                      <Grid container item xs={3} style={{ justifyContent: "right", marginBlock: "5px"}}>
+                                        <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "0.7rem", textAlign: "right"}} ><u>{nombre}</u></div>                                                     
+                                      </Grid>
+                                      <Grid container item xs={9}>
+                                        
+                                      </Grid>                                       
+                                      {data.detalleExam[nombre].map((daton: any, indexW: any) =>
+                                        <Grid container item key={indexW} >
+                                          <Grid container item xs={3} style={{ justifyContent: "right" }}>
+                                            <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.7rem", textAlign: "right"}} >{daton.name}</div>
                                           </Grid>
-                                          <Grid container item xs={2}></Grid>
-                                          <Grid container item xs={2}></Grid>
-                                          <Grid container item xs={3}></Grid>
-                                          <Grid container item xs={3}></Grid>
-                                          {data.detalleExam[nombre].map((daton: any, indexW: any) =>
-                                            <Grid container item key={indexW} >
-                                              <Grid container item xs={2} style={{ justifyContent: "right" }}>
-                                                <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{daton.name}</div>
+                                          <Grid container item xs={2} style={{ justifyContent: "center" }} >
+                                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.7rem" }} >{daton.result}</InputLabel >
+                                          </Grid>
+                                          <Grid container item xs={2} style={{ justifyContent: "center" }}>
+                                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.7rem" }} >{daton.unit.name}</InputLabel >
+                                          </Grid>
+                                          <Grid container item xs={3} style={{ justifyContent: "center" }}>
+                                            {daton.examinationReferenceValues.map((datito: any, indexT: any) =>
+                                              <Grid container item style={{ justifyContent: "center" }}>
+                                                <InputLabel key={indexT} style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.7rem" }} >{datito.name}</InputLabel >
                                               </Grid>
-                                              <Grid container item xs={2} style={{ justifyContent: "center" }} >
-                                                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{daton.result}</InputLabel >
-                                              </Grid>
-                                              <Grid container item xs={2} style={{ justifyContent: "center" }}>
-                                                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{daton.unit.name}</InputLabel >
-                                              </Grid>
-                                              <Grid container item xs={3} style={{ justifyContent: "center" }}>
-                                                {daton.examinationReferenceValues.map((datito: any, indexT: any) =>
-                                                  <Grid container item style={{ justifyContent: "center" }}>
-                                                    <InputLabel key={indexT} style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{datito.name}</InputLabel >
-                                                  </Grid>
 
-                                                )}
-                                              </Grid>
-                                              <Grid container item xs={3} style={{ justifyContent: "center" }}>
-                                                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.9rem" }} >{daton.methodology.name}</InputLabel >
-                                              </Grid>
-                                            </Grid>
-                                          )}
+                                            )}
+                                          </Grid>
+                                          <Grid container item xs={2} style={{ justifyContent: "center" }}>
+                                            <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.7rem" }} >{daton.methodology.name}</div>
+                                          </Grid>
                                         </Grid>
-                                      )
-                                      }
-                                    </div>
-                                  </Box>
-                                }
-                              </Grid>
-                              <Grid container item >
-                                <Grid container item xs={6} style={{ justifyContent: "left" }}>
+                                      )}
+                                    </Grid>
+                                    )
+                                  }
                                 </Grid>
-                                <Grid container item xs={6} style={{ justifyContent: "end" }}>
-                                  <img src={firma} width="220em" />
-                                </Grid>
-                              </Grid>
-                              <Grid container item >
-                                <Grid container item xs={6} style={{ justifyContent: "left" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} ><b>Sede:</b>   {sedeUser}</InputLabel >
-                                </Grid>
-                                <Grid container item xs={6} style={{ justifyContent: "end" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} ><b>Correo:</b>   {correoUser}</InputLabel >
-                                </Grid>
-                              </Grid>
-                              <Grid container item>
-                                <Grid container item xs={6} style={{ justifyContent: "left" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} ><b>Teléfono:</b>   {telfUser}</InputLabel >
-                                </Grid>
-                                <Grid container item xs={6} style={{ justifyContent: "end" }}>
-                                  <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1rem" }} ><b>Dirección:</b>   {direccion}</InputLabel >
-                                </Grid>
-                              </Grid>
-                              <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.8rem" }} ><b>www.redlabperu.com</b></InputLabel >
 
+                              </Grid>
                             </Grid>
+
+                            {/* Body */}                                           
+                        
+
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} ></Grid>
+                            <Grid item xs={8} height= "50px" ></Grid>
+                            {/* Footer */}
+                            <Grid container item >
+                              <Grid item xs={12}  >
+                                <div style={{ width: "800px", maxWidth: "100%", justifyContent: "left", maxHeight: "100%"}}>
+                                  <div style={{ margin: "5px" }}>
+                                  <Grid container item xs={12} style={{ justifyContent: "end" }}>
+                                    <img src={firma} height="25px" width="80px"></img>                            
+                                  </Grid>
+                                  <Grid container item mt={1} style= {{justifyContent: "left"}} >
+                                    <Grid container item xs={8} >                          
+                                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.6rem" }} ><b>Sede:</b>   {sedeUser}</InputLabel >
+                                    </Grid>                                  
+                                    <Grid container item xs={4} style= {{justifyContent: "end"}}>                          
+                                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.6rem" }} ><b>Correo:</b>   {correoUser}</InputLabel >
+                                    </Grid>
+                                  </Grid>
+                                  <Grid container item mt={1}>
+                                    <Grid container item xs={8}>                          
+                                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.6rem" }} ><b>Teléfono:</b>   {telfUser}</InputLabel >
+                                    </Grid>                                  
+                                    <Grid container item xs={4} style= {{justifyContent: "end"}}>                          
+                                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.6rem" }} ><b>Dirección:</b>   {direccion}</InputLabel >
+                                    </Grid>
+                                  </Grid>
+                                
+                                  <Grid container item mt={1}>
+                                    <Grid container item xs={8}>                          
+                                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "0.6rem" }} ><b>www.redlabperu.com</b></InputLabel >
+                                    </Grid>
+                                  </Grid>
+                                  </div>
+                                </div>
+                              </Grid>
+                            </Grid>
+                          
                           </Grid>
-                        </>
-                      )}
-                    </Grid>
+                          
+
+                        </Grid>
+                      </>
+                    )}
                   </Grid>
-                  <Grid container item xs mt={2.5}>
-                    <Grid item xs={8} ></Grid>
-                    <Grid container item xs={4} spacing={2}>
-                      <Grid item xs={6} >
-                        <Button onClick={handleCloseResultado} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
-                      </Grid>
-                      <Grid item xs={6} >
-                        <ReactToPrint
-                          trigger={() => (
-                            <Button variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Imprimir</Button>
-                          )}
-                          pageStyle={pageStyle}
-                          content={() => componente}
-                        />
-                      </Grid>
+                </Grid>
+                <Grid container item xs mt={2.5}>
+                  <Grid item xs={8} ></Grid>
+                  <Grid container item xs={4} spacing={2}>
+                    <Grid item xs={6} >
+                      <Button onClick={handleCloseResultado} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
+                    </Grid>
+                    <Grid item xs={6} >
+                      <ReactToPrint
+                        trigger={() => (
+                          <Button variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Imprimir</Button>
+                        )}
+                        pageStyle={pageStyle}
+                        content={() => componente}
+                        documentTitle={docTitle}
+                      
+                      />
                     </Grid>
                   </Grid>
                 </Grid>
-              </Box>
-            </Grid>
+              </Grid>
+            </Box>
           </Grid>
-        </Modal>
+        </Grid>
+      </Modal>
       </div >
-    </Box >
+
+      <div>
+        <Modal
+          keepMounted
+          open={rangeDate}
+          onClose={handleCloseRangeDate}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+                        <Box sx={style2}>
+                        <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Filtro por fecha</InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={15} spacing={1}>
+                                    <Grid item xs={9} >
+                                    <TextField type="date" focused fullWidth id="outlined-basic" label="Fecha inicial *" variant="outlined" value={fechaCreacion} onChange={handleChangeFechaCreacion}/>
+                                    </Grid>
+                                    <Grid item xs={9} >
+                                    <TextField type="date" focused fullWidth id="outlined-basic" label="Fecha final *" variant="outlined" value={fecha} onChange={handleChangFecha}/>
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={filt} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Filtrar</Button>
+                                    </Grid>
+                                    <Grid item xs={5} >
+                                        <Button onClick={ope2} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Actualizar</Button>
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseRangeDate} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+      </div>
+
+    </Box>
   );
 }
 

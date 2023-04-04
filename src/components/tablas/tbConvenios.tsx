@@ -1,4 +1,6 @@
-import * as React from 'react';
+//import * as React from 'react';
+import Swal from 'sweetalert2';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,18 +12,22 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { getAgreementsApi, getFilterAgreeApi } from '../../api';
-import { Button, Tooltip } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { getAgreementsApi,getPriceListApi, getFilterAgreeApi, deleteAgreementApi,getAgreementApi } from '../../api';
+import { Button, Tooltip, Modal, InputLabel, Grid} from '@mui/material';
+import { Link, useParams } from 'react-router-dom';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 import RequestQuoteRoundedIcon from '@mui/icons-material/RequestQuoteRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 interface Data {
   name: string;
   description: string;
   options: string;
 }
 
+var a = "";
 
+var b = "";
 function createData(
   name: string,
   description: string,
@@ -153,12 +159,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 export default function TbConvenios({ busqueda }: any) {
+
+  const { id } = useParams();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>("");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState<any>([]);
+  const [idBorrar, setId] = React.useState<any>([]);
+  const [idBorrar2, setId2] = React.useState<any>([]);
+  const [abrirEliminarConfirmConvenio, setAbrirDeleteConfirmConvenio] = React.useState<any>(false);
+  const [eliminarConvenio, setEliminarConvenio] = React.useState<any>(false);
+  const [eliminaerrorConvenio, setEliminarErrorConvenio] = React.useState<any>(false);
+  
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -168,6 +182,78 @@ export default function TbConvenios({ busqueda }: any) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
+  const handleCloseEliminarConvenio = () => {
+    setAbrirDeleteConfirmConvenio(false);
+  }
+
+  var convenioDelete=()=>{
+    Swal.fire({
+        title: 'El convenio fue eliminado correctamente',
+        icon: 'success',
+    })
+  }
+
+ 
+  let aux = rows
+  const sleep = (ms: any) => new Promise(resolve => setTimeout(resolve, ms))
+  const handleDelete = async (id: any, id2: any) => {
+    console.log(id2)
+  var DeleteConvenio=()=>{
+    Swal
+    .fire({
+        title: "Desea eliminar el convenio: "+id2+"?",
+        showCancelButton: true,
+        cancelButtonColor: '#0C3DA7',
+        confirmButtonColor: '#FB0909',
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+    })
+    .then(resultado => {
+        if (resultado.value) {
+            // Hicieron click en "Sí"
+            try {
+              setRows([])
+              //await sleep(50)
+               
+              setRows(aux)
+
+              deleteAgreementApi(id).then((x: any) => {
+                setId(x.data.id)
+                //setId(x.data.name)
+              });
+        
+              setRows(aux.filter((row: any) => row.id !== id));
+        
+            } catch(error) {
+               console.error(error)
+               
+            }
+            //setAbrirDeleteConfirmConvenio(true);
+            convenioDelete()
+        } else {
+            // Dijeron que no
+            console.log("*NO se elimina el convenio");
+        }
+    });
+  }
+  DeleteConvenio()     
+}
+
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 450,
+  bgcolor: 'white',
+  border: '1px solid #white',
+  borderRadius: "15px",
+  boxShadow: 24,
+  p: 4,
+};
+
   React.useEffect(() => {
     if (busqueda == "") {
       getAgreementsApi(0, 1000).then(ag => {
@@ -181,6 +267,7 @@ export default function TbConvenios({ busqueda }: any) {
 
   }, [busqueda]);
 
+ 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -199,7 +286,7 @@ export default function TbConvenios({ busqueda }: any) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }} className="card-table">
+      <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -220,7 +307,6 @@ export default function TbConvenios({ busqueda }: any) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any, index: any) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
-
                   return (
                     <TableRow
                       hover
@@ -261,7 +347,21 @@ export default function TbConvenios({ busqueda }: any) {
                               </Tooltip>
                             </Link>
                           </div>
+
+
+                          <div style={{ paddingLeft: "5px" }}>
+                            
+                              <Tooltip title="Eliminar Convenio" followCursor>
+                                <Button onClick={() => handleDelete(row.id, row.name)} variant="contained" className='boton-icon'>
+                                  <DeleteIcon />
+                                </Button>
+                              </Tooltip>
+                            
+                          </div>
+
+
                         </div>
+
                       </TableCell>
                     </TableRow>
                   );
@@ -275,6 +375,7 @@ export default function TbConvenios({ busqueda }: any) {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
+
             </TableBody>
           </Table>
         </TableContainer>
@@ -294,6 +395,30 @@ export default function TbConvenios({ busqueda }: any) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+              <div>
+               <Modal
+                 keepMounted
+                 open={abrirEliminarConfirmConvenio}
+                 onClose={handleCloseEliminarConvenio}
+                 aria-labelledby="keep-mounted-modal-title"
+                 aria-describedby="keep-mounted-modal-description"
+                >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "green", fontFamily: "Quicksand", fontWeight: "200", fontSize: "1.5rem" }} >Convenio eliminado correctamente </InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={6} spacing={2}>
+                                    <Grid item xs={6} >
+                                        <Button onClick={handleCloseEliminarConvenio} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "300", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+               </div>
+
     </Box>
   );
 }
+

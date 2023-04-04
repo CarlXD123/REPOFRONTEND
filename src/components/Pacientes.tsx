@@ -39,13 +39,14 @@ class Pacientes extends React.Component<{ navigate: NavigateFunction }, any>{
     }
     render() {
         return (
-            <div className='tabla-componente card-table-general'>
+            <Paper sx={{ width: '100%', mb: 18 }}>
+            <div className='tabla-componente card-table'>
                 <Contenido>
                     <div style={{ display: "flex" }} className="nav-tabla">
                         <Grid container item>
                             <div style={{ display: "flex", alignItems: "center" }} >
                                 <MasksIcon style={{ color: "white", fontSize: "50px" }}></MasksIcon>
-                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "2.7rem" }} >Pacientes</InputLabel >
+                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "2.5rem" }} >Pacientes</InputLabel>
                             </div>
                         </Grid>
                         <Grid container item>
@@ -73,7 +74,7 @@ class Pacientes extends React.Component<{ navigate: NavigateFunction }, any>{
                                 </div>
                                 <div className="textfield-buscar-combo">
                                     <TextField fullWidth id="outlined-basic" variant="outlined"
-                                        placeholder="Ingrese contendio de busqueda"
+                                        placeholder="Ingrese contenido de busqueda"
                                         value={this.state.buscarTexto}
                                         onChange={this.handleChange('buscarTexto')}
                                         onKeyPress={this.buscarPacienteEnter}
@@ -107,11 +108,14 @@ class Pacientes extends React.Component<{ navigate: NavigateFunction }, any>{
                     </div>
 
                     <br></br>
+                    <br></br>
+                    <br></br>
                     <div>
                         <TbPacientes texto={this.state.buscarTextoClone} opcion={this.state.buscarSeleccionarClone} />
                     </div>
                 </Contenido>
             </div>
+            </Paper>
         )
     }
 }

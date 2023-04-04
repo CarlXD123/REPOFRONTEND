@@ -119,7 +119,7 @@ export class CambiarContraseña extends React.Component<any, any>{
                                 </Grid>
                                 <Grid container spacing={2} mt={0.5}>
                                     <Grid item xs={12}>
-                                        <TextField fullWidth id="outlined-basic" label="Contraseña actual" variant="outlined"
+                                        <TextField fullWidth id="outlined-basic" label="Nueva contraseña" variant="outlined"
                                             type={this.state.newShowPassword ? 'text' : 'password'}
                                             value={this.state.newpassword}
                                             onChange={this.handleChange('newpassword')}
@@ -148,7 +148,7 @@ export class CambiarContraseña extends React.Component<any, any>{
                                 </Grid>
                                 <Grid container spacing={2} mt={0.5}>
                                     <Grid item xs={12}>
-                                        <TextField fullWidth id="outlined-basic" label="Contraseña actual" variant="outlined"
+                                        <TextField fullWidth id="outlined-basic" label="Confirmar contraseña" variant="outlined"
                                             type={this.state.confirmNewSowPassword ? 'text' : 'password'}
                                             value={this.state.confirmpassword}
                                             onChange={this.handleChange('confirmpassword')}

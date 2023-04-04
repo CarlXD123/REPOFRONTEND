@@ -6,7 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
-import { addAppointmentApi, addRefererApi, addDoctorApi, getAgreementsAllApi, getAgreementsListPriceApi, getDistrictsForProvince, getDoctorApi, getExaminationsAllApi, getFilterExamApi, getHeadquartersAllApi, getPatienByDOCApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi,getPatientByNameApi, getFilterPatientsApi, getFilterPatientAppointmentsApi } from "../../../api";
+import { addAppointmentApi, addRefererApi, addDoctorApi, getPagedPatientsApi, getAgreementsAllApi, getAgreementsListPriceApi, getDistrictsForProvince, getDoctorApi, getExaminationsAllApi, getFilterExamApi, getHeadquartersAllApi, getPatienByDOCApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi,getPatientByNameApi, getFilterPatientsApi, getFilterPatientAppointmentsApi } from "../../../api";
 import { Link } from "react-router-dom";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 import TbConvenios from "../../tablas/tbConvenios";
@@ -15,6 +15,9 @@ import { visuallyHidden } from '@mui/utils';
 import moment from "moment";
 import { BorderBottom, BorderColor } from "@mui/icons-material";
 import TbPacientes from "../../tablas/tbPacientes";
+import {Hidden} from '@material-ui/core';
+import Swal from 'sweetalert2';
+
 
 export default function TbRegCita() {
 
@@ -55,6 +58,8 @@ export default function TbRegCita() {
     const [abrirListaPrecios, setAbrirListaPrecios] = React.useState<any>(true);
     const [bloqueaboton, setBloquearBoton] = React.useState<any>(true);
     const [bloqueaboton2, setBloquearBoton2] = React.useState<any>(true);
+    const [bloqueaboton3, setBloquearBoton3] = React.useState<any>(true);
+    const [bloqueaboton4, setBloquearBoton4] = React.useState<any>(false);
     const [asignarExamenes, setAsignarExamenes] = React.useState<any>(false);
     const [examenes, setExamenes] = React.useState<any>('');
     const [servicioList, setServicioList] = React.useState<any[]>([]);
@@ -67,6 +72,7 @@ export default function TbRegCita() {
     const [pageBuscar, setPageBuscar] = React.useState(0);
     const [rowsPerPageBuscar, setRowsPerPageBuscar] = React.useState(5);
     const [rowsBuscar, setRowsBuscar] = React.useState<any>([]);
+    const [rowsBuscar2, setRowsBuscar2] = React.useState<any>([]);
 
 
     const [orderAsignar, setOrderAsignar] = React.useState<Order>('asc');
@@ -83,6 +89,7 @@ export default function TbRegCita() {
     const [abrirBuscarPaciente, setAbrirBuscarPaciente] = React.useState<any>(false);
     const [nombreReferencia, setNombreReferencia] = React.useState<any>('');
     const [abrirAgregarReferencia, setAbrirAgregarReferencia] = React.useState<any>(false);
+    const [isVisible, setIsVisible] = React.useState<any>(false);
     const [abrirGuardarCita, setAbrirGuardarCita] = React.useState<any>(false);
     const [abrirError, setAbrirError] = React.useState<any>(false);
     const [abrirErrorDescuento, setAbrirErrorDescuento] = React.useState<any>(false);
@@ -117,12 +124,6 @@ export default function TbRegCita() {
         setAbrirErrorHora(false);
     }
     
-
-
- 
-  
-
-
     const handleCloseAbrirAgregarMedico = () => {
         setAbrirAgregarMedico(false);
     }
@@ -134,8 +135,15 @@ export default function TbRegCita() {
 
 
     const handleOpenBuscarPaciente = () => {
-        setAbrirBuscarPaciente(true);
-        setPaciente("")
+        if(tipoDoc =="3"){
+           setAbrirBuscarPaciente(true);
+           setBloquearBoton4(true);
+           setPaciente("")
+        } else if(tipoDoc =="1"){
+          setBloquearBoton3(true)
+        } else if(tipoDoc =="2"){
+          setBloquearBoton3(true)
+        }
     }
 
 
@@ -252,12 +260,18 @@ export default function TbRegCita() {
         getHeadquartersAllApi().then((ag: any) => {
             setSedeList(ag.data);
         });
+
+        getPagedPatientsApi(0, 1000).then((ap: any) => {
+            setRowsBuscar2(ap.data)
+          });
+
         getAgreementsAllApi().then((ag: any) => {
             setConvenioList(ag.data);
         });
         getRefererApi().then((ag: any) => {
             setReferenciaList(ag.data);
         });
+
         getDoctorApi().then((ag: any) => {
             setMedicoList(ag.data);
         });
@@ -445,14 +459,58 @@ export default function TbRegCita() {
         setAsignarExamenes(false);
         
     }
+ 
+    const OpenExamen=()=>{
+        Swal.fire({
+            title: 'Ingrese el paciente!!!',
+            icon: 'warning',
+          })
+    }
+
+    const DesactivarBarra=()=>{
+        if(tipoDoc == "3"){
+            setBloquearBoton4(true)
+        } else if(tipoDoc == "1"){
+            setBloquearBoton4(false)
+        } else if(tipoDoc == "2"){
+            setBloquearBoton4(false)
+        }
+    }
+    
+    const OpenButton=()=>{
+        if(tipoDoc == "3"){
+            AparecerBoton()
+            setBloquearBoton3(false)
+            setBloquearBoton4(true)
+        } else if(tipoDoc == "1"){
+            OcultarBoton()
+            setBloquearBoton3(true)
+            setBloquearBoton4(false)
+        } else if(tipoDoc == "2"){
+            OcultarBoton()
+            setBloquearBoton3(true)
+            setBloquearBoton4(false)
+        }
+
+    }
+
+    const OpenExamenListaPrecio=()=>{
+        Swal.fire({
+            title: 'Eliga una lista de precio!!!',
+            icon: 'warning',
+          })
+    }
+
+
     const handleOpenAgregarExamen = () => {
         if (nombres == "") {
-            alert("Ingrese el dni del paciente")
+            OpenExamen();
             setAsignarExamenes(false);
             return;
         }
         if (bloquearAgregarExamenes) {
-            alert("Eliga una lista de precio")
+            //alert("Eliga una lista de precio")
+            OpenExamenListaPrecio();
             setAsignarExamenes(false);
             return;
         }
@@ -463,17 +521,41 @@ export default function TbRegCita() {
         
 
     }
+    
+    const tipoDocListFilt = tipoDocList.filter(
+        (n: any) => ( n.value< 4)
+    ) 
 
+    const OpenText=()=>{
+        Swal.fire({
+            title: 'Ingrese texto por favor',
+            icon: 'warning',
+          })
+    }
 
+    const OpenBus=()=>{
+        Swal.fire({
+            title: 'Ingrese el metodo de busqueda',
+            icon: 'warning',
+          })
+    }
    
+    const NoPacient=()=>{
+        Swal.fire({
+            title: 'Paciente no encontrado',
+            icon: 'warning',
+          })
+    }
+
     const buscarPaciente = (dato: any) => {
-        if (dato == "") {
-            alert("ingrese texto por favor");
+
+        if (tipoDoc == "") {
+            OpenBus()
             return;
         }
 
-        if (tipoDoc == "") {
-            alert("ingrese metodo de busqueda");
+        if (dato == "") {
+            OpenText()
             return;
         }
 
@@ -483,54 +565,53 @@ export default function TbRegCita() {
         } else if (tipoDoc == "2") {
             datos = "passport";
         } else if (tipoDoc == "3") {
-            datos = "dni"
+            datos = "other"
         }
-        getPatienByDOCApi(datos, dato).then((x: any) => {
-            if (x.status) {
-                setNombres(x.data.person.name)
-                setApePa(x.data.person.lastNameP)
-                setApeMa(x.data.person.lastNameM)
-                setIdClient(x.data.person.id)
-            } else {
-                alert(x.message.text)
-                return;
-            }
 
-        });
 
+            getPatienByDOCApi(datos, dato).then(x => {
+                if (x.status) {
+                    setNombres(x.data.person.name)
+                    setApePa(x.data.person.lastNameP)
+                    setApeMa(x.data.person.lastNameM)
+                    setIdClient(x.data.person.id)
+                } else {
+                    //alert(x.message.text)
+                    NoPacient()
+                    return;
+                }
+    
+            });
+        
 
        }
 
-       const buscarPacienteByName = (dato: any) => {
-        if (dato == "") {
-            alert("ingrese texto por favor");
-            return;
+       
+
+       var resultadosBusqueda = rowsBuscar2.filter((elemento: any)=>{
+        if(elemento.person.name.toString().toLowerCase().includes(dato.toLowerCase())){
+
+          return elemento
         }
 
-        let datos;
-        if (tipoDoc == "1") {
-            datos = "dni";
-        } 
-       
-        getPatienByDOCApi(datos, dato).then((x: any) => {
-            if (x.status) {
-                setNombres(x.data.person.name)
-                setApePa(x.data.person.lastNameP)
-                setApeMa(x.data.person.lastNameM)
-                setIdClient(x.data.person.id)
-            } else {
-                alert(x.message.text)
-                return;
-            }
+        if(elemento.person.lastNameP.toString().toLowerCase().includes(dato.toLowerCase())){
 
-        });
+          return elemento
+        }
 
+        if(elemento.person.lastNameM.toString().toLowerCase().includes(dato.toLowerCase())){
 
-       }
+          return elemento
+        }
+      });
 
+      const filt = () => {
+       if(tipoDoc == "3" && dato!=""){
+        setRowsBuscar(resultadosBusqueda)
+      }
+     }
 
        
-
     const buscarDocEnter = (event: any, dato: any) => {
         if (event.key === 'Enter') {
             buscarPaciente(dato)
@@ -550,7 +631,7 @@ export default function TbRegCita() {
         border: '1px solid #white',
         borderRadius: "15px",
         boxShadow: 24,
-        p: 4,
+        p: 10,
     };
 
 
@@ -624,7 +705,7 @@ export default function TbRegCita() {
             id: 'code',
             numeric: false,
             disablePadding: false,
-            label: 'Codigo',
+            label: 'Nro. de documento',
             disableOrder: false
         },
         {
@@ -705,24 +786,6 @@ export default function TbRegCita() {
             </TableHead>
         );
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //#region Tabla asignar examens
     interface DataAsignar {
@@ -904,6 +967,14 @@ export default function TbRegCita() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
     //#endregion 
 
+
+    const MiniCam=()=>{
+        Swal.fire({
+            title: 'Seleccione minimo un campo',
+            icon: 'warning',
+          })
+    }
+
     const buscarExamenes = (datoExamen: any, datoServicio: any) => {
         if (datoExamen != "" && datoServicio == "") {
             getFilterExamApi(datoExamen, "").then(ag => {
@@ -918,13 +989,46 @@ export default function TbRegCita() {
                 setRowsAsignar(ag.data)
             })
         } else {
-            alert("Seleccione minimo un campo")
+            MiniCam()
         }
     }
+
     const buscarExamenEnter = (event: any, datoExamen: any, datoServicio: any) => {
         if (event.key === 'Enter') {
             buscarExamenes(datoExamen, datoServicio)
         }
+    }
+
+    const ExamErr=()=>{
+        Swal.fire({
+            title: 'El examen que eligio no cuenta con un precio',
+            icon: 'warning',
+            target: '#custom-target',
+          })
+    }
+
+    const ExamAgregado=()=>{
+        Swal.fire({
+            title: 'El examen que eligio, ya esta agregado',
+            icon: 'warning',
+            target: '#custom-target',
+          })
+    }
+
+    const ExamErrado=()=>{
+        Swal.fire({
+            title: 'Examen no registrado',
+            icon: 'warning',
+            target: '#custom-target',
+          })
+    }
+
+    const ReferenteEr=()=>{
+        Swal.fire({
+            title: 'Referente no registrado',
+            icon: 'warning',
+            target: '#custom-target3',
+          })
     }
 
     const agregarExamen = (id: any, code: any) => {
@@ -949,13 +1053,16 @@ export default function TbRegCita() {
                     let aux = rowsAsignar;
                     setRowsAsignar(aux.filter((x: any) => x.id != examen.id))
                 } else {
-                    alert("El examen que eligio no cuenta con un precio")
+                   // alert("El examen que eligio no cuenta con un precio")
+                   ExamErr()
                 }
             } else{
-                alert("El examen que eligio, ya esta agregado")
+                //alert("El examen que eligio, ya esta agregado")
+                ExamAgregado()
             }
         } else {
-            alert("Examen no registrado")
+            //alert("Examen no registrado")
+            ExamErrado()
         }
     }
     const eliminarExamen = (id: any) => {
@@ -968,7 +1075,7 @@ export default function TbRegCita() {
         calcularPrecio(aux)
     }
     const calcularPrecio = (fila: any) => {
-        let acumPrice = 0;
+        var acumPrice = 0;
         fila.forEach((x: any) => {
             acumPrice += x.price
         })
@@ -977,29 +1084,123 @@ export default function TbRegCita() {
     }
 
 
-  
+    const ErroGuardadoCita=()=>{
+        Swal.fire({
+            title: 'La cita no se guardo',
+            icon: 'warning',
+          })
+    }
 
+    const GuardaCita=()=>{
+        Swal.fire({
+            title: 'La cita se guardo correctamente',
+            icon: 'success',
+          })
+    }
+
+
+    const selectSede=()=>{
+        Swal.fire({
+            title: 'Seleccione una sede',
+            icon: 'warning',
+          })
+    }
+
+    const discountError=()=>{
+        Swal.fire({
+            title: 'Ingrese un descuento correcto',
+            icon: 'warning',
+          })
+    }
+
+    const hour=()=>{
+        Swal.fire({
+            title: 'Hora incorrecta',
+            icon: 'warning',
+          })
+    }
+
+    const date=()=>{
+        Swal.fire({
+            title: 'Fecha incorrecta',
+            icon: 'warning',
+          })
+    }
+
+    const Referen=()=>{
+        Swal.fire({
+            title: 'Seleccione una referencia',
+            icon: 'warning',
+          })
+    }
+
+    const Referencode=()=>{
+        Swal.fire({
+            title: 'Escriba un codigo de referencia',
+            icon: 'warning',
+          })
+    }
+
+    const ObservaReferente=()=>{
+        Swal.fire({
+            title: 'Ingrese las observaciones del referente',
+            icon: 'warning',
+          })
+    }
+
+    const MedicoAgrega=()=>{
+        Swal.fire({
+            title: 'Elija el medico',
+            icon: 'warning',
+          })
+    }
 
     const guardarCita = () => {
         const hoy = moment().format("YYYY-MM-DD");
         if (sede == "") {
             //alert("Seleccione una sede");
-            setAbrirError(true);
+            //setAbrirError(true);
+            selectSede()
             return;
         }
+
+        if (referencia == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            Referen()
+            return;
+        }
+
+        if (codigoReferencia == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            Referencode()
+            return;
+        }
+        if (medico == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            MedicoAgrega()
+            return;
+        }
+
         if (isNaN(precioFinal) || precioFinal <= 0) {
             //alert("Ingrese un descuento correcto");
-            setAbrirErrorDescuento(true);
+            //setAbrirErrorDescuento(true);
+            discountError()
             return;
         }
+
         if (fecha < hoy) {
             //alert("Fecha incorrecta");
-            setAbrirErrorFecha(true);
+            //setAbrirErrorFecha(true);
+            date()
             return;
         }
         if (hora == "") {
             //alert("Hora incorrecta");
-            setAbrirErrorHora(true);
+            //setAbrirErrorHora(true);
+            hour()
             return;
         }
 
@@ -1027,18 +1228,46 @@ export default function TbRegCita() {
             if (x.status) {
                 //alert(x.message.text)
                 window.location.href = "/apps/appointments"
-                setAbrirGuardarCita(true);
+                //setAbrirGuardarCita(true);
+                GuardaCita()
             } else {
-                alert(x.message.text)
+                ErroGuardadoCita()
+                //alert(x.message.text)
                 
             }
         })
 
         
     }
+
+    const NombMedico=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del medico',
+            icon: 'warning',
+            target: '#custom-target2',
+          })
+    }
+
+    const AddMedico=()=>{
+        Swal.fire({
+            title: 'Medico agregado correctamente',
+            icon: 'success',
+          })
+    }
+
+    const NombError=()=>{
+        Swal.fire({
+            title: 'No se agrego el medico',
+            icon: 'warning',
+            target: '#custom-target2',
+          })
+    }
+   
+
     const crearNuevoMedico = () => {
         if (nombreMedico == "") {
-            alert("Ingrese nombre del medico")
+            //alert("Ingrese nombre del medico")
+            NombMedico()
             return
         }
         let data = {
@@ -1046,20 +1275,56 @@ export default function TbRegCita() {
         }
         addDoctorApi(data).then((x: any) => {
             if (x.status) {
-                alert(x.message.text)
+                //alert(x.message.text)
+                AddMedico()
                 getDoctorApi().then((ag: any) => {
                     setMedicoList(ag.data);
                 });
                 setAbrirAgregarMedico(false)
             } else {
-                alert(x.message.text)
+                //alert(x.message.text)
+                NombError()
                 return;
             }
         })
     }
+
+    const NombNewRefer=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del referente',
+            icon: 'warning',
+            target: '#custom-target3',
+          })
+    }
+
+    const NombNewReferError=()=>{
+        Swal.fire({
+            title: 'No se agrego el referente',
+            icon: 'warning',
+          })
+    }
+
+    const NewReferente=()=>{
+        Swal.fire({
+            title: 'Nuevo referente agregado',
+            icon: 'success',
+          })
+    }
+
+    
+
+    const AparecerBoton = () => {
+        setIsVisible(true);
+    };
+
+    const OcultarBoton = () => {
+        setIsVisible(false);
+    };
+
     const crearNuevoReferente = () => {
         if (nombreReferencia == "") {
-            alert("Ingrese nombre del referente")
+            //alert("Ingrese nombre del referente")
+            NombNewRefer()
             return
         }
         let data = {
@@ -1067,20 +1332,22 @@ export default function TbRegCita() {
         }
         addRefererApi(data).then((x: any) => {
             if (x.status) {
-                alert(x.message.text)
+                //alert(x.message.text)
                 getRefererApi().then((ag: any) => {
                     setReferenciaList(ag.data);
                 });
                 setAbrirAgregarReferencia(false)
+                NewReferente()
             } else {
-                alert(x.message.text)
+                //alert(x.message.text)
+                NombNewReferError()
                 return;
             }
         })
     }
     return (
         
-        <div className='tabla-componente card-table-general'>
+        <div className='tabla-componente card-table'>
           
             <Contenido>
               
@@ -1110,6 +1377,7 @@ export default function TbRegCita() {
                 <br></br>
                 <div>
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
+                    <Paper sx={{ width: '100%', mb: 20 }}>
                         <div>
                             <TabContext value={values}>
                                 <Box >
@@ -1123,12 +1391,12 @@ export default function TbRegCita() {
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Grid container spacing={2}>
                                             <Grid container item md={4} >
-                                                <TextField id="outlined-basic" label="Metodo de busqueda" variant="outlined"
-                                                    select fullWidth value={tipoDoc} onChange={handleChangeTypeDoc}
+                                                <TextField id="outlined-basic" onClick={DesactivarBarra} label="Metodo de busqueda" variant="outlined"
+                                                      select fullWidth value={tipoDoc} onChange={handleChangeTypeDoc}
                                                 >
-                                                    {tipoDocList.map((row: any, index: any) => {
+                                                    {tipoDocListFilt.map((row: any, index: any) => {
                                                         return (
-                                                            <MenuItem key={index} value={row.value}>{row.name}</MenuItem>
+                                                            <MenuItem key={index} value={row.value} onClick={DesactivarBarra}>{row.name}</MenuItem>
                                                             
                                                         )
                                                     })}
@@ -1136,22 +1404,26 @@ export default function TbRegCita() {
                                                 </TextField>
                                             </Grid>
 
-                                           
-                                            <MenuItem value="">
-                                                        <Button onClick={handleOpenBuscarPaciente} variant="contained" style={{ width: '35.5ch', height: '6.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Buscar Paciente por nombre</Button>
+                                    
+                                            <MenuItem style={{visibility: isVisible ? 'visible' : 'hidden'}} onClick={OpenButton}>
+                                                        <Button onClick={handleOpenBuscarPaciente} disabled={bloqueaboton3} variant="contained" style={{ width: '35.5ch', height: '6.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.20rem" }}>Buscar Paciente por nombre</Button>
                                             </MenuItem>
+                                            
 
 
                                             <Grid container item md={8}>
-                                                <TextField error={dato === ""} fullWidth id="outlined-basic" label="Buscar paciente *" variant="outlined"
-                                                    value={dato} onChange={handleChangeNumDoc} onKeyPress={(event) => buscarDocEnter(event, dato)}
+                                                <TextField error={numDoc === ""} onClick={OpenButton} disabled={bloqueaboton4} fullWidth id="outlined-basic" label="Buscar paciente *" variant="outlined"
+                                                    value={numDoc} onChange={handleChangeNumDoc} onKeyPress={(event) => buscarDocEnter(event, numDoc)}
                                                     InputProps={{
                                                         style: {
                                                             cursor: "pointer"
                                                         },
                                                         endAdornment: (
+
                                                             <InputAdornment position="end" >
-                                                                <SearchSharpIcon onClick={() => buscarPaciente(dato)} />
+                                                                <MenuItem disabled={bloqueaboton4}>
+                                                                <SearchSharpIcon onClick={() => buscarPaciente(numDoc)} />
+                                                                </MenuItem>
                                                             </InputAdornment>
                                                         ),
                                                     }}
@@ -1407,10 +1679,11 @@ export default function TbRegCita() {
                                 </TabPanel>
                             </TabContext>
                         </div>
+                     </Paper>
                     </CardContent>
                 </div >
                 <div>
-                    <Modal
+                    <Modal id="custom-target"
                         keepMounted
                         open={asignarExamenes}
                         onClose={handleCloseAsignarExamenes}
@@ -1477,7 +1750,7 @@ export default function TbRegCita() {
                                                                     <TableRow
                                                                         hover
                                                                         tabIndex={-1}
-                                                                        key={row.code}
+                                                                        key={index}
                                                                     >
                                                                         <TableCell
                                                                             component="th"
@@ -1485,7 +1758,7 @@ export default function TbRegCita() {
                                                                             scope="row"
                                                                             style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
                                                                         >
-                                                                            {row.code}
+                                                                            {index}
                                                                         </TableCell>
                                                                         <TableCell
                                                                             align="left"
@@ -1568,7 +1841,7 @@ export default function TbRegCita() {
                     </Modal>
                 </div>
                 <div>
-                    <Modal
+                    <Modal id="custom-target2"
                         keepMounted
                         open={abrirAgregarMedico}
                         onClose={handleCloseAbrirAgregarMedico}
@@ -1576,7 +1849,7 @@ export default function TbRegCita() {
                         aria-describedby="keep-mounted-modal-description"
                     >
                         <Box sx={style}>
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Nueva colegiatura</InputLabel >
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Crear nuevo medico</InputLabel >
 
                             <Grid container item xs mt={2.5}>
                                 <TextField fullWidth id="outlined-basic" label="Nombre del Médico" variant="outlined" value={nombreMedico} onChange={handleChangeNombreMedico} />
@@ -1596,7 +1869,7 @@ export default function TbRegCita() {
                     </Modal>
                 </div>
                 <div>
-                    <Modal
+                    <Modal id="custom-target3"
                         keepMounted
                         open={abrirAgregarReferencia}
                         onClose={handleCloseAbrirAgregarReferencia}
@@ -1632,19 +1905,19 @@ export default function TbRegCita() {
                         aria-labelledby="keep-mounted-modal-title"
                         aria-describedby="keep-mounted-modal-description"
                     >
-                        <Box sx={style}>
+                        <Box sx={style} className="card-table-general">
                             <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Buscar Paciente</InputLabel >
                             <Grid container item mt={2.5} spacing={2}>
                                 <Grid item xs={6} >
                                     <TextField fullWidth id="outlined-basic" label="Buscar pacientes *" variant="outlined"
-                                        value={nombres} onChange={handleChangeBuscarPaciente} onKeyPress={(event) => buscarDocEnter(event, dato)}
+                                        value={dato} onChange={handleChangeBuscarPaciente} onKeyPress={(event) => buscarDocEnter(event, dato)}
                                         InputProps={{
                                             style: {
                                                 cursor: "pointer"
                                             },
                                             endAdornment: (
                                                 <InputAdornment position="end" >
-                                                    <SearchSharpIcon onClick={() => buscarPaciente(dato)} />
+                                                    <SearchSharpIcon onClick={filt} />
                                                 </InputAdornment>
                                             ),
                                         }}
@@ -1652,104 +1925,123 @@ export default function TbRegCita() {
                                 </Grid>
                                 
                             </Grid>
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={12}>
-                                    <Box sx={{ width: '100%' }}>
-                                        <Paper sx={{ width: '100%', mb: 2, borderRadius: "12px" }}>
-                                            <TableContainer>
-                                                <Table
-                                                    sx={{ minWidth: 750 }}
-                                                    aria-labelledby="tableTitle"
-                                                    size={'medium'}
-                                                >
-                                                    <EnhancedTableHeadBuscar
-                                                        numSelected={selectedBuscar.length}
-                                                        order={orderBuscar}
-                                                        orderBy={orderByBuscar}
-                                                        onRequestSort={handleRequestSortBuscar}
-                                                        rowCount={rowsBuscar.length}
-                                                    />
-                                                    <TableBody>
-                                                        {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              rows.slice().sort(getComparator(order, orderBy)) */}
-                                                        {stableSortBuscar(rowsBuscar, getComparatorBuscar(orderBuscar, orderByBuscar))
-                                                            .slice(pageBuscar * rowsPerPageBuscar, pageBuscar * rowsPerPageBuscar + rowsPerPageBuscar)
-                                                            .map((row: any, index: any) => {
-                                                                const labelId = `enhanced-table-checkbox-${index}`;
 
-                                                                return (
-                                                                    <TableRow
-                                                                        hover
-                                                                        tabIndex={-1}
-                                                                        key={index}
-                                                                    >
-                                                                        <TableCell
-                                                                            component="th"
-                                                                            id={labelId}
-                                                                            scope="row"
-                                                                            style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                                                                        >
-                                                                            {row.code}
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            align="left"
-                                                                            style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                                                                        >
-                                                                              {row.name}
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            align="left"
-                                                                            style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                                                                        >
-                                                                            {row.service.name}
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            align="left"
-                                                                            style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                                                                        >
-                                                                            {row.description}
-                                                                        </TableCell>
-                                                                        <TableCell align="left">
-                                                                            <div style={{ display: "flex" }}>
-                                                                                <div style={{ paddingRight: "5px" }}>
-                                                                                    <Button onClick={() => agregarExamen(row.id, row.code)} variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> Agregar</Button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                );
-                                                            })}
-                                                        {emptyRowsBuscar > 0 && (
-                                                            <TableRow
-                                                                style={{
-                                                                    height: (53) * emptyRowsBuscar,
-                                                                }}
-                                                            >
-                                                                <TableCell colSpan={6} />
-                                                            </TableRow>
-                                                        )}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                            <TablePagination
-                                                rowsPerPageOptions={[5, 15, 20]}
-                                                component="div"
-                                                count={rowsBuscar.length}
-                                                rowsPerPage={rowsPerPageBuscar}
-                                                page={pageBuscar}
-                                                labelRowsPerPage={"Filas por Pagina: "}
-                                                labelDisplayedRows={
-                                                    ({ from, to, count }) => {
-                                                        return '' + from + '-' + to + ' de ' + count
-                                                    }
-                                                }
-                                                onPageChange={handleChangePageAsignar}
-                                                onRowsPerPageChange={handleChangeRowsPerPageAsignar}
-                                            />
-                                        </Paper>
-                                    </Box>
-                                </Grid>
+                            <Grid container spacing={2} mt={0.5}>
+                                    <Grid container item md={12}>
+                                       <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.8rem" }} >Pacientes encontrados</div>
+                                    </Grid>
                             </Grid>
+                            <Grid container spacing={2} mt={0.5}>
+                                             <Grid container item mt={2.5}>
+                                               <Grid item xs={12}>
+                                                <Box sx={{ width: '100%' }}>
+                                                    <Paper sx={{ width: '100%', mb: 10, borderRadius: "12px" }} className="card-table-general">
+                                                        <TableContainer>
+                                                            <Table
+                                                                sx={{ minWidth: 750 }}
+                                                                aria-labelledby="tableTitle"
+                                                                size={'medium'}
+                                                            >
+                                                                <EnhancedTableHeadBuscar
+                                                                    numSelected={selectedBuscar.length}
+                                                                    order={orderBuscar}
+                                                                    orderBy={orderByBuscar}
+                                                                    onRequestSort={handleRequestSortBuscar}
+                                                                    rowCount={rowsBuscar.length}
+                                                                />
+                                                                <TableBody>
+                                                                    {stableSortBuscar(rowsBuscar, getComparatorBuscar(orderBuscar, orderByBuscar))
+                                                                        .slice(pageBuscar * rowsPerPageBuscar, pageBuscar * rowsPerPageBuscar + rowsPerPageBuscar)
+                                                                        .map((row: any, index: any) => {
+                                                                            const labelId = `enhanced-table-checkbox-${index}`;
+
+                                                                            return (
+                                                                                <TableRow
+                                                                                    hover
+                                                                                    tabIndex={-1}
+                                                                                    key={row.id}
+                                                                                >
+                                                                                    <TableCell
+                                                                                        component="th"
+                                                                                        id={labelId}
+                                                                                        scope="row"
+                                                                                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                                                                                        key="dni"
+                                                                                    >
+                                                                                       {row.person.dni}
+                                                                                    </TableCell>
+                                                                                    <TableCell
+                                                                                        align="left"
+                                                                                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                                                                                    >
+                                                                                        {row.person.name}
+                                                                                    </TableCell>
+                                                                                    <TableCell
+                                                                                        align="left"
+                                                                                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                                                                                    >
+                                                                                        {row.person.lastNameP}
+                                                                                        
+                                                                                    </TableCell>
+                                                                                    <TableCell
+                                                                                        align="left"
+                                                                                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                                                                                    >
+                                                                                        {row.person.lastNameM}
+                                                                                        
+                                                                                    </TableCell>
+                                                                                    <TableCell align="left">
+                                                                                        <div style={{ display: "flex" }}>
+                                                                                            <div onClick={() => buscarPaciente(row.person.name)} style={{ paddingRight: "5px" }}><Button variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> AGREGAR</Button></div>
+                                                                                        </div>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            );
+                                                                        })}
+                                                                    {(emptyRowsBuscar > 0 && (
+                                                                        <TableRow
+                                                                            style={{
+                                                                                height: (53) * emptyRowsBuscar,
+                                                                            }}
+                                                                        >
+                                                                            <TableCell colSpan={6} />
+                                                                        </TableRow>
+                                                                    ))}
+
+                                                                    {
+                                                                      rowsBuscar.length == 0 ? <TableRow>
+                                                                        
+                                                                       <TableCell colSpan={8}  >
+                                                                          No hay coincidencia de pacientes
+                                                                       </TableCell>
+                                                                    </TableRow> : ""
+                                                                    }
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                        <TablePagination
+                                                            rowsPerPageOptions={[5, 15, 20]}
+                                                            component="div"
+                                                            count={rowsBuscar.length}
+                                                            rowsPerPage={rowsPerPageBuscar}
+                                                            page={pageBuscar}
+                                                            labelRowsPerPage={"Filas por Pagina: "}
+                                                            labelDisplayedRows={
+                                                                ({ from, to, count }) => {
+                                                                    return '' + from + '-' + to + ' de ' + count
+                                                                }
+                                                            }
+                                                            onPageChange={handleChangePageBuscar}
+                                                            onRowsPerPageChange={handleChangeRowsPerPageBuscar}
+                                                        />
+                                                    </Paper>
+                                                </Box>
+
+                                            </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                           
                             <Grid container item mt={2.5}>
                                 <Grid item xs={4} ></Grid>
                                 <Grid container item xs={8} spacing={2}>
@@ -1764,172 +2056,8 @@ export default function TbRegCita() {
                     </Modal>
                 </div>
 
-
-
-
-
- 
-
-                <div>
-                    <Modal
-                        keepMounted
-                        open={abrirGuardarCita}
-                        onClose={handleCloseAbrirGuardarCita}
-                        aria-labelledby="keep-mounted-modal-title"
-                        aria-describedby="keep-mounted-modal-description"
-                    >
-                        <Box sx={style}>
-                            <InputLabel style={{ color: "green", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Registro exitoso!!!</InputLabel >
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={4} ></Grid>
-                                <Grid container item xs={8} spacing={2}>
-                                    <Grid item xs={9} >
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Button onClick={handleCloseAbrirGuardarCita} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Modal>
-                </div>
-
-
-
-
-                <div>
-                    <Modal
-                        keepMounted
-                        open={abrirError}
-                        onClose={handleCloseAbrirErrorCita}
-                        aria-labelledby="keep-mounted-modal-title"
-                        aria-describedby="keep-mounted-modal-description"
-                    >
-                        <Box sx={style}>
-                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Registro fallido!!!</InputLabel >
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={4} ></Grid>
-                                <Grid container item xs={8} spacing={2}>
-                                    <Grid item xs={9} >
-
-                                   
-                                     <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "300", fontSize: "1.4rem" }} >Elija una sede</InputLabel >
-
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Button onClick={handleCloseAbrirErrorCita} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Modal>
-                </div>
-
-
-
-
-                <div>
-                    <Modal
-                        keepMounted
-                        open={abrirErrorDescuento}
-                        onClose={handleCloseAbrirErrorDescuento}
-                        aria-labelledby="keep-mounted-modal-title"
-                        aria-describedby="keep-mounted-modal-description"
-                    >
-                        <Box sx={style}>
-                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Registro fallido!!!</InputLabel >
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={4} ></Grid>
-                                <Grid container item xs={8} spacing={2}>
-                                    <Grid item xs={9} >
-
-                                   
-                                     <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "300", fontSize: "1.4rem" }} >Elija un descuento correcto</InputLabel >
-
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Button onClick={handleCloseAbrirErrorDescuento} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Modal>
-                </div>
-
-
-
-
-
-
-                <div>
-                    <Modal
-                        keepMounted
-                        open={abrirErrorFecha}
-                        onClose={handleCloseAbrirErrorFecha}
-                        aria-labelledby="keep-mounted-modal-title"
-                        aria-describedby="keep-mounted-modal-description"
-                    >
-                        <Box sx={style}>
-                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Registro fallido!!!</InputLabel >
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={4} ></Grid>
-                                <Grid container item xs={8} spacing={2}>
-                                    <Grid item xs={9} >
-
-                                   
-                                     <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "300", fontSize: "1.4rem" }} >Elija una fecha</InputLabel >
-
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Button onClick={handleCloseAbrirErrorFecha} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Modal>
-                </div>
-
-
-
-                <div>
-                    <Modal
-                        keepMounted
-                        open={abrirErrorHora}
-                        onClose={handleCloseAbrirErrorHora}
-                        aria-labelledby="keep-mounted-modal-title"
-                        aria-describedby="keep-mounted-modal-description"
-                    >
-                        <Box sx={style}>
-                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Registro fallido!!!</InputLabel >
-                            <Grid container item mt={2.5}>
-                                <Grid item xs={4} ></Grid>
-                                <Grid container item xs={8} spacing={2}>
-                                    <Grid item xs={9} >
-
-                                   
-                                     <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "300", fontSize: "1.4rem" }} >Elija una hora especifica</InputLabel >
-
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Button onClick={handleCloseAbrirErrorHora} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Modal>
-                </div>
-
-
-
-
-
-
-
-              
             </Contenido>
         </div>
     )
 
 }
-
-

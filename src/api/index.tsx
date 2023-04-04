@@ -1,6 +1,6 @@
 import { apiFetch } from "./apiFetch";
 
-const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND || "3000";
+const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND || "5000";
 const URL_BACKEND = process.env.REACT_APP_API_URL_BACKEND || "http://localhost";
 
 export const API_URL_BACKEND = `${URL_BACKEND}:${PORT_BACKEND}/api/`;
@@ -72,6 +72,9 @@ export const getHeadquartersAllApi = () => apiFetch(`headquarter/all`);
 export const getTypeAgreementsAllApi = () => apiFetch(`typeAgreement/all`);
 export const getExaminationsAllApi = () => apiFetch(`examination/all`);
 export const getProfessionsAllApi = () => apiFetch(`profession/all`);
+export const getNationAllApi = () => apiFetch(`nation/all`);
+export const getAmbAllApi = () => apiFetch(`amb/all`);
+export const getUserApi = () => apiFetch(`user`);
 export const getEmployeesAllApi = (criteria: any, query: any) =>
   apiFetch(`employee/all?${criteria}=${query}`);
 
@@ -182,6 +185,44 @@ export const editMethodApi = (data: any, id: any) =>
 export const deleteMethodApi = (id: any) =>
   apiFetch(`method/${id}`, { method: "DELETE" });
 
+
+export const saveNationApi = (data: any) =>
+  apiFetch(`nation/`, { method: "POST", body: data });
+export const getNationApi = (id: any) => apiFetch(`nation/${id}`);
+export const editNationApi = (data: any, id: any) =>
+  apiFetch(`nation/${id}`, { method: "PUT", body: data });
+export const deleteNationApi = (id: any) =>
+  apiFetch(`nation/${id}`, { method: "DELETE" });
+
+
+export const saveAmbApi = (data: any) =>
+  apiFetch(`amb/`, { method: "POST", body: data });
+export const getAmbApi = (id: any) => apiFetch(`amb/${id}`);
+export const editAmbApi = (data: any, id: any) =>
+  apiFetch(`amb/${id}`, { method: "PUT", body: data });
+export const deleteAmbApi = (id: any) =>
+  apiFetch(`amb/${id}`, { method: "DELETE" });
+
+
+export const saveBrandApi = (data: any) =>
+  apiFetch(`brand/`, { method: "POST", body: data });
+export const deleteBrandApi = (id: any) =>
+  apiFetch(`brand/${id}`, { method: "DELETE" });
+export const getBrandAllApi= (start: any, end: any, status: any) =>
+  apiFetch(`brand?range=[${start},${end}]&status=${status}`);
+export const getBrandApi = (id: any) => apiFetch(`brand/${id}`);
+
+
+export const getModelApi = (id: any) => apiFetch(`model/brand/${id}`);
+export const getModelsApi = (id: any) => apiFetch(`model/${id}`);
+export const saveModelApi = (data: any) =>
+  apiFetch(`model/`, { method: "POST", body: data });
+export const deleteModelApi = (id: any) =>
+  apiFetch(`model/${id}`, { method: "DELETE" });
+export const savePathApi = (data: any) =>
+  apiFetch(`path/`, { method: "POST", body: data });
+
+
 export const getUnitsApi = (start: any, end: any) =>
   apiFetch(`unit?range=[${start},${end}]`);
 export const getUnitApi = (id: any) => apiFetch(`unit/${id}`);
@@ -202,6 +243,8 @@ export const getPagedPatientsApi = (start: any, end: any) =>
   apiFetch(`client?range=[${start},${end}]`);
 export const getPatienByDOCApi = (criteria: any, doc: any) =>
   apiFetch(`client/doc/search?${criteria}=${doc}`);
+
+export const getMatchAllApi = () => apiFetch(`match/`);
 
 
 export const getPatientByNameApi = (criteria: any, name: any, criteria2: any, lastNameP: any) =>
@@ -225,6 +268,7 @@ export const getAppointmentsResultsApi = (appointmentId: any) =>
 export const getExamValueResult = (appointmentDetailId: any) =>
   apiFetch(`appointment/examvalueresult/${appointmentDetailId}`);
 export const getAppointmentApi = (id: any) => apiFetch(`appointment/${id}`);
+export const getAppointmentPatientApi = (id: any) => apiFetch(`appointment/pacient/${id}`);
 export const saveAppointmentApi = (data: any) =>
   apiFetch(`appointment/`, { method: "POST", body: data });
 export const attendAppointmentApi = (data: any, id: any) =>
@@ -290,6 +334,8 @@ export const saveProfessionApi = (data: any) =>
 
 export const getMenuUserApi = (userId: any) => apiFetch(`user/menu/${userId}`);
 
+export const getHeadquartersAgreementApi = (headquartersId: any) =>
+  apiFetch(`agreement?headquarterId=${headquartersId}`);
 export const editHeadquarterApi = (id: any, data: any) =>
   apiFetch(`headquarter/${id}`, { method: "PUT", body: data, headers: { 'Content-Type': 'application/json' } });
 export const saveHeadquarterApi = (data: any) =>

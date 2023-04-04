@@ -3,15 +3,18 @@ import { Box } from "@mui/system";
 import React from "react";
 import { Contenido } from "../../Home";
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
-import { getTypeAgreementsAllApi, saveAgreementApi } from "../../../api";
+import { getTypeAgreementsAllApi, saveAgreementApi, getHeadquartersAllApi } from "../../../api";
 import { Link } from "react-router-dom";
 import { Modal } from "@material-ui/core";
+import Swal from 'sweetalert2';
 
 export default function TbRegConvenios() {
 
     //#region GET-SET textfield
     const [tipoList, setTipoList] = React.useState<any[]>([]);
+    const [sedeList, setSedeList] = React.useState<any[]>([]);
     const [tipo, setTipo] = React.useState<any>('');
+    const [sede, setSede] = React.useState<any>('');
     const [nombre, setNombre] = React.useState<any>('');
     const [telefono, setTelefono] = React.useState<any>('');
     const [direccion, setDireccion] = React.useState<any>('');
@@ -19,12 +22,18 @@ export default function TbRegConvenios() {
     const [correo, setCorreo] = React.useState<any>('');
     const [descripcion, setDescripcion] = React.useState<any>('');
     const [guardarConvenio, setAbrirGuardarConvenio] = React.useState<any>(false);
+    const [errorTipo, setAbrirTipo] = React.useState<any>(false);
+    const [errorNombreConvenio, setAbrirNombreConvenio] = React.useState<any>(false);
     const [guardarConvenioError, setAbrirGuardarConvenioError] = React.useState<any>(false);
     //#endregion
 
     //#region handles de Vistas
     const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTipo(event.target.value);
+
+    };
+    const handleChangeSede = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSede(event.target.value);
     };
     const handleChangeNombre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNombre(event.target.value);
@@ -49,8 +58,45 @@ export default function TbRegConvenios() {
         setAbrirGuardarConvenio(false);
     }
 
+    const handleCloseAbrirTipoFalta = () => {
+        setAbrirTipo(false);
+    }
+
+    const handleCloseAbrirErrorNombreConvenio = () => {
+        setAbrirNombreConvenio(false);
+    }
+
+
     const handleCloseAbrirGuardarConvenioError = () => {
         setAbrirGuardarConvenio(false);
+    }
+
+    var convenioCreate=()=>{
+        Swal.fire({
+            title: 'El convenio fue creado exitosamente',
+            icon: 'success',
+        })
+    }
+
+    var convenioDenied=()=>{
+        Swal.fire({
+            title: 'El convenio no fue creado',
+            icon: 'warning',
+        })
+    }
+
+    var convenioTipo=()=>{
+        Swal.fire({
+            title: 'Seleccione el tipo de convenio',
+            icon: 'warning',
+        })
+    }
+
+    var convenioTipoName=()=>{
+        Swal.fire({
+            title: 'Seleccione el nombre del convenio',
+            icon: 'warning',
+        })
     }
     //#endregion
     const style = {
@@ -71,6 +117,10 @@ export default function TbRegConvenios() {
         getTypeAgreementsAllApi().then((ag: any) => {
             setTipoList(ag.data)
         });
+
+        getHeadquartersAllApi().then((ag: any) => {
+            setSedeList(ag.data)
+        });
         //#endregion
     }, []);
 
@@ -78,15 +128,17 @@ export default function TbRegConvenios() {
         let mError = "";
         let error = false;
         if (tipo == "" || tipo == undefined) {
-            mError += "Seleccione el tipo\n";
+            //setAbrirTipo(true);
+            convenioTipo()
             error = true;
         }
         if (nombre == "") {
-            mError += "Seleccione el nombre\n";
+            //setAbrirNombreConvenio(true);
+            convenioTipoName()
             error = true;
         }
         if (error) {
-            alert(mError);
+            //alert(mError);
             return;
         }
         saveAgreementApi({
@@ -96,15 +148,18 @@ export default function TbRegConvenios() {
             "ruc": ruc == "" ? null : ruc,
             "email": correo,
             "description": descripcion,
-            "TypeAgreementId": tipo
+            "TypeAgreementId": tipo,
+            "HeadquartersId": sede,
         }).then((ag: any) => {
             if (ag.status) {
                 //alert(ag.message.text)
-                setAbrirGuardarConvenio(true);
+                //setAbrirGuardarConvenio(true);
+                convenioCreate()
                 window.location.href = '/apps/agreements'
             } else {
                 //alert(ag.message.text)
-                setAbrirGuardarConvenioError(true);
+                //setAbrirGuardarConvenioError(true);
+                convenioDenied()
             }
         })
     }
@@ -117,7 +172,7 @@ export default function TbRegConvenios() {
                         <Link to={"/apps/agreements"}>
                             <div style={{ display: "flex", alignItems: "center" }} >
                                 <KeyboardBackspaceRoundedIcon style={{ color: "white", fontSize: "1.3rem", cursor: "pointer" }}></KeyboardBackspaceRoundedIcon>
-                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convernios</InputLabel >
+                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convenios</InputLabel >
                             </div>
                         </Link>
                     </Grid>
@@ -148,6 +203,7 @@ export default function TbRegConvenios() {
 
                                     </TextField>
                                 </Grid>
+                            
                                 <Grid container item md={10}>
                                     <TextField fullWidth id="outlined-basic" label="Nombre" variant="outlined" value={nombre} onChange={handleChangeNombre} />
                                 </Grid>
@@ -223,6 +279,54 @@ export default function TbRegConvenios() {
                                     </Grid>
                                     <Grid item xs={3} >
                                         <Button onClick={handleCloseAbrirGuardarConvenioError} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+                <div>
+                    <Modal
+                        keepMounted
+                        open={errorTipo}
+                        onClose={handleCloseAbrirTipoFalta}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Seleccione el Tipo de Convenio!!!</InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={9} >
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseAbrirTipoFalta} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+                <div>
+                    <Modal
+                        keepMounted
+                        open={errorNombreConvenio}
+                        onClose={handleCloseAbrirErrorNombreConvenio}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Escriba el nombre del Convenio!!!</InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={9} >
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseAbrirErrorNombreConvenio} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
                                     </Grid>
                                 </Grid>
                             </Grid>

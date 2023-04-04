@@ -62,16 +62,16 @@ a[role=button] {
 }
 
 /* Medium Devices, Desktops Only */
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 100px) {
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 20px;
+    height: 20px;
     background-color: rgba(0, 0, 0, 0);
   }
 
   ::-webkit-scrollbar:hover {
-    width: 12px;
-    height: 12px;
+    width: 20px;
+    height: 20px;
     background-color: rgba(0, 0, 0, 0.06);
   }
 
@@ -87,12 +87,30 @@ a[role=button] {
   }
 
   .card-table-general {
-    border-radius: 5px !important;
+    border-radius: 20px !important;
     overflow-x: scroll !important;
     margin-right: auto !important;
     margin-left: auto !important;
-    max-width: 1300px !important;
-    max-height: 100% !important;
+    max-width: 1000px !important;
+    overflow-y: scroll !important;
+  }
+
+  .card-table-examfinish {
+    border-radius: 20px !important;
+    overflow-x: scroll !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    max-width: 2000px !important;
+    overflow-y: scroll !important;
+  }
+
+  .card-table-resultados {
+    border-radius: 20px !important;
+    overflow-x: scroll !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    max-width: 820px !important;
+    overflow-y: scroll !important;
   }
 }
 
@@ -291,7 +309,7 @@ a {
   overflow-x: scroll !important;
   margin-right: auto !important;
   margin-left: auto !important;
-  margin-top: 20px !important;
+  margin-top: 80px !important;
 }
 
 .card-table-textField {
@@ -332,9 +350,7 @@ th {
   min-width: 100px
 }
 
-.nav-tabla {
-  align-items: center;
-}
+
 
 .text-responsive-combo {
   font-size: 1.5rem !important;
@@ -344,8 +360,112 @@ th {
 }
 
 
-@media only screen and (max-width : 900px) {
+@page { 
+  size: A4 
+}
 
+@media print {
+  .pagebreak {
+
+    page-break-after: always !important;
+  }
+
+  .pagebreak2 {
+    page-break-inside: avoid;
+  }
+
+  .no-break-inside {
+    
+    break-inside: "avoid";
+  }
+
+  .break-before {
+    
+    break-before: "always";
+  }
+}
+
+
+@media only screen and (max-width : 600px){
+  .contenedor-tabla-apilis {
+    display: inline-block !important;
+  }
+}
+
+@media only screen and (max-width : 700px){
+  .contenedor-tabla-apilis1 {
+    display: inline-block !important;
+  }
+
+  .contenedor-tabla-configure {
+    display: inline-block !important;
+  }
+}
+
+@media only screen and (max-width : 800px){
+  .contenedor-tabla-apilis1 {
+    display: inline-block !important;
+  }
+}
+
+
+@media only screen and (max-width : 800px){
+  .contenedor-tabla-apilis2 {
+    display: inline-block !important;
+  }
+}
+
+@media only screen and (min-width : 200px) and (max-width : 400px){ 
+.card-table-general {
+  border-radius: 5px !important;
+  overflow-x: scroll !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  width: 310px !important;
+  max-height: 100% !important;
+}
+}
+
+.card-container:hover {
+   transform: scale(1.1);
+   box-Shadow: 0px 0px 15px 0px;
+}
+
+
+.task-container {
+  /* border: 1px dotted pink; */
+  margin: 0;
+  list-style: none;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 2rem;
+
+  display:inline;
+  flex-direction: column;
+}
+
+.task-item {
+  color: rgb(255, 255, 255);
+  box-shadow: 0px 2px 4px #4a4c4e;
+  border-radius: 5px;
+  padding: 0.3em 0.5em;
+  background-color: rgb(71, 34, 207);
+  text-align: center;
+  margin: 5px;
+  border: 2px solid transparent;
+}
+
+.task-item:focus {
+  outline: none;
+  border: 2px solid #4a9af5;
+}
+
+
+
+
+
+
+@media only screen and (max-width : 1000px) {
   .login-background.con {
     display: none !important;
   }
@@ -370,7 +490,16 @@ th {
     overflow-x: scroll !important;
     margin-right: auto !important;
     margin-left: auto !important;
-    max-width: 280px !important;
+    max-width: 600px !important;
+    max-height: 100% !important;
+  }
+
+  .card-table-apilis3 {
+    border-radius: 5px !important;
+    overflow-x: scroll !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    max-width: 400px !important;
     max-height: 100% !important;
   }
 

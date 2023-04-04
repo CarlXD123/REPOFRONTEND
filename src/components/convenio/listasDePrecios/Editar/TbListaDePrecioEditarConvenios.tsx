@@ -1,14 +1,16 @@
-import { Button, CardContent, Grid, InputAdornment, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
+import { Button, CardContent, Grid, InputAdornment, InputLabel,Modal, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
 import { Link, useParams } from "react-router-dom";
 import { visuallyHidden } from '@mui/utils';
 import { Contenido } from "../../../Home";
-import { editAgreementApi, editPriceListApi, getExaminationsAllApi, getPriceListApi } from "../../../../api";
+import { editAgreementApi, editPriceListApi, getPagedExaminationsApi, getExaminationsAllApi, getPriceListApi } from "../../../../api";
 import PaidIcon from '@mui/icons-material/Paid';
 import TbListaDePrecioConvenios from "../TbListaDePrecioConvenios";
 import { isNumeric } from "../../../../util";
+import Swal from 'sweetalert2';
+
 export default function TbListaDePrecioEditarConvenios() {
 
     const { id, idlista } = useParams();
@@ -140,8 +142,15 @@ export default function TbListaDePrecioEditarConvenios() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rows, setRows] = React.useState<any>([]);
+    const [rows2, setRows2] = React.useState<any>([]);
+    const [rows3, setRows3] = React.useState<any>([]);
     const [nombre, setNombre] = React.useState<any>([]);
+    const [abrirUpdateListaPrecio, setAbrirActualizarListaPrecio] = React.useState<any>(false);
 
+
+    const handleCloseAbrirActualizarListaPrecio = () => {
+        setAbrirActualizarListaPrecio(false);
+    }
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
         property: keyof Data,
@@ -150,25 +159,43 @@ export default function TbListaDePrecioEditarConvenios() {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 490,
+        bgcolor: 'white',
+        border: '1px solid #white',
+        borderRadius: "15px",
+        boxShadow: 24,
+        p: 4,
+    };
+
     React.useEffect(() => {
 
         getPriceListApi(id).then((x: any) => {
             setNombre(x.data.name)
+            setRows2(x.data.examinations)
             if (x.data.examinations.length == 0) {
-                getExaminationsAllApi().then((y: any) => {
+                getPagedExaminationsApi(0, 1000).then((y: any) => {
                     setRows(y.data)
                 });
             } else {
                 setRows(x.data.examinations)
             }
         });
-
-
     }, []);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
+
+    console.log(rows2)
+    rows.sort((a: any, b: any) => (
+        a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
+    )
 
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +223,28 @@ export default function TbListaDePrecioEditarConvenios() {
         aux[index].discountPrice = event.target.value;
         setRows(aux);
     }
+
+    var convenioListPrice=()=>{
+        Swal.fire({
+            title: 'Lista de precio editada exitosamente',
+            icon: 'success',
+        })
+    }
+
+    var convenioExitPrice=()=>{
+        Swal.fire({
+            title: 'Hubo algun error al editar la lista de precio',
+            icon: 'warning',
+        })
+    }
+
+    var priceListPrice=()=>{
+        Swal.fire({
+            title: 'Ingrese correctamente el precio',
+            icon: 'warning',
+        })
+    }
+
     const ruta = idlista;
     const modificar = () => {
         let aux = [...rows];
@@ -207,7 +256,8 @@ export default function TbListaDePrecioEditarConvenios() {
             }
         });
         if (error) {
-            alert("Ingrese correctamente el precio");
+            //alert("Ingrese correctamente el precio");
+            priceListPrice()
             return;
         }
         editPriceListApi(id, {
@@ -215,10 +265,13 @@ export default function TbListaDePrecioEditarConvenios() {
             name: nombre
         }).then((x: any) => {
             if (x.status) {
-                alert(x.message.text);
+                //alert(x.message.text);
+                //setAbrirActualizarListaPrecio(true)
+                convenioListPrice()
                 window.location.href = `/apps/agreements/priceLists/${ruta}`
             } else {
-                alert(x.message.text);
+                //alert(x.message.text);
+                convenioExitPrice()
             }
         });
 
@@ -274,7 +327,7 @@ export default function TbListaDePrecioEditarConvenios() {
                 <br></br>
                 <div>
                     <Box sx={{ width: '100%' }}>
-                        <Paper sx={{ width: '100%', mb: 2 }} className="card-table-textField">
+                        <Paper sx={{ width: '100%', mb: 20 }} className="card-table-textField">
                             <Grid container style={{ alignItems: "center" }} spacing={1}>
                                 <Grid item md={12} >
                                     <TableContainer>
@@ -292,7 +345,6 @@ export default function TbListaDePrecioEditarConvenios() {
                                             />
                                             <TableBody>
                                                 {stableSort(rows, getComparator(order, orderBy))
-                                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                                     .map((row: any, index: any) => {
                                                         const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -317,7 +369,7 @@ export default function TbListaDePrecioEditarConvenios() {
                                                                     style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
                                                                 >
                                                                     <TextField id="outlined-basic" label="Ingresar precio (S/)"
-                                                                        variant="standard" value={row.discountPrice}
+                                                                        type="number" variant="standard" value={row.discountPrice}
                                                                         onChange={event => editarCelda(event, index)} />
 
                                                                 </TableCell>
@@ -336,26 +388,40 @@ export default function TbListaDePrecioEditarConvenios() {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 15, 20]}
-                                        component="div"
-                                        count={rows.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        labelRowsPerPage={"Filas por Pagina: "}
-                                        labelDisplayedRows={
-                                            ({ from, to, count }) => {
-                                                return '' + from + '-' + to + ' de ' + count
-                                            }
-                                        }
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
                                 </Grid>
                             </Grid>
                         </Paper>
                     </Box>
                 </div >
+
+
+                <div>
+                    <Modal
+                        keepMounted
+                        open={abrirUpdateListaPrecio}
+                        onClose={handleCloseAbrirActualizarListaPrecio}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "green", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} > Lista de precio actualizada!!!</InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={9} >
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseAbrirActualizarListaPrecio} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+
+
+
             </Contenido>
         </div>
     )

@@ -14,6 +14,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import HandshakeRoundedIcon from '@mui/icons-material/HandshakeRounded';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import MediationIcon from '@mui/icons-material/Mediation';
 import MasksIcon from '@mui/icons-material/Masks';
 import PersonIcon from '@mui/icons-material/Person';
 ///
@@ -47,6 +48,18 @@ import TbEditarExamen from './components/examenes/modificar/tbEditarExamen';
 import CerrarSesion from './components/CerrarSesion';
 import TbRegistrarResultado from './components/resultado/porAtender/registrarResultado';
 import TbEditarResultado from './components/resultado/atendidas/editarResultado';
+import TbReporteDate from './components/reporte/filtrar/tbReporteDate';
+import PatientExamination from './components/PatientExamination';
+import TbReportExamFinish from './components/reporte/filtrar/tbReportExamFinish';
+import TbApilis from './components/apilis/tbApilis';
+import Configure from './components/apilis/configure';
+import Marca from './components/apilis/marca';
+import NuevaMarca from './components/apilis/nuevaMarca';
+import Modelos from './components/apilis/modelos';
+import NuevoModelo from './components/apilis/nuevoModelo';
+import ModelSetting from './components/apilis/modelSetting';
+import ModelSettingNew from './components/apilis/modelSettingnew';
+import ModelSettingEdit from './components/apilis/modelSettingedit';
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -211,7 +224,7 @@ class App extends React.Component<any, any> {
           <CssBaseline/>
           {
             this.state.isLogged ?
-              <AppBar position="fixed" open={this.state.openMenu} style={{ backgroundColor: "yellow" }}  >
+              <AppBar position="fixed" open={this.state.openMenu} style={{ backgroundColor: "yellow"}}  >
                 <Toolbar style={{ backgroundColor: "#0A2C44" }}>
                   <IconButton
                     color="inherit"
@@ -293,7 +306,7 @@ class App extends React.Component<any, any> {
           {
 
             this.state.isLogged ?
-              <Drawer variant="permanent" open={this.state.openMenu} >
+              <Drawer variant="permanent" open={this.state.openMenu}>
                 <DrawerHeader style={{ backgroundColor: "#0E4AC2" }}>
                   <div>
                     <h1 style={{ fontFamily: "Quicksand", fontWeight: "500", fontSize: '1.2rem', color: "white" }}>RedLab Perú <b style={{ color: "red" }}>|</b> 2022</h1>
@@ -321,9 +334,9 @@ class App extends React.Component<any, any> {
                   borderRadius: "50%",
                   color: "white", display: this.state.openMenu ? 'block' : 'none',
                 }}>
-                  <AccountCircleRoundedIcon sx={{ fontSize: "7rem", display: this.state.openMenu ? 'block' : 'none' }} />
+                  <AccountCircleRoundedIcon sx={{ fontSize: "1.7rem", display: this.state.openMenu ? 'block' : 'none' }} />
                 </div>
-                <Divider sx={{ backgroundColor: "rgb(10, 44, 68)", borderBottomWidth: "60px", display: this.state.openMenu ? 'block' : 'none', }} />
+                <Divider sx={{ backgroundColor: "rgb(10, 44, 68)", borderBottomWidth: "50px", display: this.state.openMenu ? 'block' : 'none', }} />
 
                 <List sx={{ backgroundColor: "#0E4AC2" }}>
                   <ListItem disablePadding sx={{ display: this.state.openMenu ? 'block' : 'none', padding: "8px 20px", backgroundColor: "#0E4AC2",color:"white" }}>
@@ -334,7 +347,7 @@ class App extends React.Component<any, any> {
                       <Link to={text.url} style={{color:"white"}}>
                         <ListItemButton className='cambio-text'
                           sx={{
-                            minHeight: 48,
+                            minHeight: 20,
                             justifyContent: this.state.openMenu ? 'initial' : 'center',
                             px: 2.5,
                             backgroundColor: "#0E4AC2"
@@ -353,6 +366,7 @@ class App extends React.Component<any, any> {
                                 text.icon === "supervisor_account" ? <Tooltip title="Personal" followCursor><PersonIcon /></Tooltip> :
                                   text.icon === "group" ? <Tooltip title="Paciente" followCursor><MasksIcon /></Tooltip> :
                                     text.icon === "calendar_today" ? <Tooltip title="Cita/Reporte" followCursor><CalendarMonthIcon /></Tooltip> :
+                                    text.icon === "apilis" ? <Tooltip title="APILIS" followCursor><MediationIcon /></Tooltip> :
                                       text.icon === "poll" ? <Tooltip title="Resultados/Exámenes" followCursor><ListAltIcon /></Tooltip> : <MailIcon />}
                           </ListItemIcon>
 
@@ -383,6 +397,8 @@ class App extends React.Component<any, any> {
               <Route path='/apps/results' element={<Resultados />} />
               <Route path='/apps/examinations' element={<Examenes />} />
               <Route path='/apps/report/exam' element={<Reporte />} />
+              <Route path='/apps/patientexaminations' element={<PatientExamination />} />
+              <Route path='/apps/apilis' element={<TbApilis />} />
 
               {/**Perfil*/}
 
@@ -414,7 +430,16 @@ class App extends React.Component<any, any> {
               <Route path='/apps/results/:id' element={<TbRegistrarResultado />} />
               <Route path='/apps/edit/results/:id' element={<TbEditarResultado />} />
 
-
+              <Route path='/apps/report/exam/reportDate' element={<TbReporteDate />} />
+              <Route path='/apps/report/exam/reportExamFin' element={<TbReportExamFinish />} />
+              <Route path='/apps/apilis/configure' element={<Configure />} />
+              <Route path='/apps/apilis/configure/marca' element={<Marca />} />
+              <Route path='/apps/apilis/configure/marca/new' element={<NuevaMarca />} />
+              <Route path='/apps/apilis/configure/marca/:id/modelos' element={<Modelos />} />
+              <Route path='/apps/apilis/configure/modelos/:id/new' element={<NuevoModelo />} />
+              <Route path='/apps/apilis/configure/modelo/:idmodelo/marca/:id/setting' element={<ModelSetting />} />
+              <Route path='/apps/apilis/configure/modelo/:idmodelo/marca/:id/setting/new' element={<ModelSettingNew />} />
+              <Route path='/apps/apilis/configure/modelo/:idmodelo/marca/:id/setting/edit' element={<ModelSettingEdit />} />
 
             </Routes>
           </Box>

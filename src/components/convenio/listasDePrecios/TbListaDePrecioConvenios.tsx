@@ -1,11 +1,12 @@
-import { Button, CardContent, Grid, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
+import { Button, CardContent, Modal, Grid, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import { Contenido } from "../../Home";
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
-import { editAgreementApi, getAgreementApi, getAgreementsListPriceApi, getTypeAgreementsAllApi, saveAgreementApi } from "../../../api";
+import { editAgreementApi,getAgreementsApi, getPriceListApi, deletePriceListApi, deleteAppointmentApi,deleteAgreementApi, getAgreementApi, editPriceListApi,getAgreementsListPriceApi, getTypeAgreementsAllApi, saveAgreementApi } from "../../../api";
 import { Link, useParams } from "react-router-dom";
 import { visuallyHidden } from '@mui/utils';
+import Swal from 'sweetalert2';
 
 export default function TbListaDePrecioConvenios() {
 
@@ -138,6 +139,11 @@ export default function TbListaDePrecioConvenios() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rows, setRows] = React.useState<any>([]);
+    const [nombre, setNombre] = React.useState<any>([]);
+    const [nombreListaPrecio, setNombreListaPrecio] = React.useState<any>([]);
+    const [idBorrar, setId] = React.useState<any>("");
+    const [eliminarPriceList, setEliminarPriceList] = React.useState<any>(false);
+    const [eliminarErrorPriceList, setEliminarErrorPriceList] = React.useState<any>(false);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -147,11 +153,105 @@ export default function TbListaDePrecioConvenios() {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const handleCloseEliminarPriceList = () => {
+        setEliminarPriceList(false);
+    }
+
+    const handleCloseErrorEliminarPriceList = () => {
+        setEliminarErrorPriceList(false);
+    }
+
+    var convenioList=()=>{
+        Swal.fire({
+            title: 'Lista de precio eliminada exitosamente',
+            icon: 'success',
+        })
+    }
+
+    var convenioExit=()=>{
+        Swal.fire({
+            title: 'Hubo algun error al eliminar la lista de precio',
+            icon: 'warning',
+        })
+    }
+
+    //const sleep = (ms: any) => new Promise(resolve => setTimeout(resolve, ms))
+
+    const handleDelete = async (id: any, id2: any) => {
+    console.log(id);
+    //var opcion = window.confirm("Desea eliminar la lista de precio "+ id + " del convenio? "+nombre)
+    var DeletePriceList=()=>{
+        Swal
+        .fire({
+            title: "Desea eliminar la lista de precio: "+ id2+" del convenio: "+nombre+" ?",
+            showCancelButton: true,
+            cancelButtonColor: '#0C3DA7',
+            confirmButtonColor: '#FB0909',
+            confirmButtonText: "Sí",
+            cancelButtonText: "No",
+        })
+        .then(resultado => {
+            if (resultado.value) {
+                // Hicieron click en "Sí"
+                try {
+                    let aux = rows
+                    setRows([])
+                    //await sleep(50)
+                    setRows(aux)
+                    
+                    deletePriceListApi(id).then((x: any) => {
+                        setId(x.data.id)
+                    });
+            
+                    editPriceListApi(id, {
+                        examinations: aux,
+                        status: 'E'
+                    })
+            
+                    setRows(aux.filter((row: any) => row.id !== id));
+                  } catch(error) {
+                       console.error(error)
+                       //setEliminarErrorPriceList(true);
+                       convenioExit()
+                  }
+                  //setEliminarPriceList(true);
+                  convenioList()
+            } else {
+                // Dijeron que no
+                console.log("*NO se elimina la lista de precio");
+            }
+        });
+      }
+
+      DeletePriceList()  
+  };
+
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 490,
+    bgcolor: 'white',
+    border: '1px solid #white',
+    borderRadius: "15px",
+    boxShadow: 24,
+    p: 4,
+  };
+
     React.useEffect(() => {
 
         getAgreementsListPriceApi(id).then(x => {
             setRows(x.data)
         });
+
+        getAgreementApi(id).then((x: any) => {
+            setNombre(x.data.id)
+            setNombre(x.data.name)
+        });
+
 
     }, []);
 
@@ -159,12 +259,14 @@ export default function TbListaDePrecioConvenios() {
         setPage(newPage);
     };
 
-
+    console.log(rows)
+   
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
 
+    
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -180,7 +282,7 @@ export default function TbListaDePrecioConvenios() {
                         <Link to={"/apps/agreements"}>
                             <div style={{ display: "flex", alignItems: "center" }} >
                                 <KeyboardBackspaceRoundedIcon style={{ color: "white", fontSize: "1.3rem", cursor: "pointer" }}></KeyboardBackspaceRoundedIcon>
-                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convernios</InputLabel >
+                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convenios / {nombre}</InputLabel >
                             </div>
                         </Link>
                     </Grid>
@@ -239,9 +341,18 @@ export default function TbListaDePrecioConvenios() {
                                                                         <Button variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> EDITAR</Button>
                                                                     </Link>
                                                                 </div>
+
+                                                                <div style={{ paddingRight: "5px" }}>
+                                                                    
+                                                                    <Button onClick={() => handleDelete(row.id, row.name)} variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> ELIMINAR</Button>
+                                                                    
+                                                                </div>
                                                             </div>
+                                                                                
                                                         </TableCell>
                                                     </TableRow>
+
+                                                    
                                                 );
                                             })}
                                         {emptyRows > 0 && (
@@ -275,7 +386,55 @@ export default function TbListaDePrecioConvenios() {
                     </Box>
                 </div >
             </Contenido>
+
+
+            <div>
+               <Modal
+                 keepMounted
+                 open={eliminarPriceList}
+                 onClose={handleCloseEliminarPriceList}
+                 aria-labelledby="keep-mounted-modal-title"
+                 aria-describedby="keep-mounted-modal-description"
+                >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "green", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Lista de precio eliminada correctamente </InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseEliminarPriceList} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+            </div>
+
+            <div>
+               <Modal
+                 keepMounted
+                 open={eliminarErrorPriceList}
+                 onClose={handleCloseErrorEliminarPriceList}
+                 aria-labelledby="keep-mounted-modal-title"
+                 aria-describedby="keep-mounted-modal-description"
+                >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "red", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Hubo algun error al eliminar la lista de precios </InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseErrorEliminarPriceList} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+            </div>
+
+
         </div>
+
     )
 }
 

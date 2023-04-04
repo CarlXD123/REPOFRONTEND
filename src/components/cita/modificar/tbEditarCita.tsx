@@ -12,6 +12,7 @@ import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 import moment from "moment";
+import Swal from 'sweetalert2';
 
 export default function TbEditarCita() {
 
@@ -409,14 +410,29 @@ export default function TbEditarCita() {
     const handleCloseAsignarExamenes = () => {
         setAsignarExamenes(false);
     }
+
+    const OpenExamenListaPrecio=()=>{
+        Swal.fire({
+            title: 'Eliga una lista de precio',
+            icon: 'warning',
+          })
+    }
+
+    const errDNIPaciente=()=>{
+        Swal.fire({
+            title: 'Ingrese el dni del paciente',
+            icon: 'warning',
+          })
+    }
+
     const handleOpenAgregarExamen = () => {
         if (nombres == "") {
-            alert("Ingrese el dni del paciente")
+            errDNIPaciente()
             setAsignarExamenes(false);
             return;
         }
         if (bloquearAgregarExamenes) {
-            alert("Eliga una lista de precio")
+            OpenExamenListaPrecio()
             setAsignarExamenes(false);
             return;
         }
@@ -625,6 +641,14 @@ export default function TbEditarCita() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
     //#endregion 
 
+
+    const errSelectMinimCamp=()=>{
+        Swal.fire({
+            title: 'Seleccione un minimo campo',
+            icon: 'warning',
+          })
+    }
+
     const buscarExamenes = (datoExamen: any, datoServicio: any) => {
         if (datoExamen != "" && datoServicio == "") {
             getFilterExamApi(datoExamen, "").then(ag => {
@@ -639,7 +663,7 @@ export default function TbEditarCita() {
                 setRowsAsignar(ag.data)
             })
         } else {
-            alert("Seleccione minimo un campo")
+            errSelectMinimCamp()
         }
     }
     const buscarExamenEnter = (event: any, datoExamen: any, datoServicio: any) => {
@@ -670,6 +694,30 @@ export default function TbEditarCita() {
             }
         }
     }
+
+    const examNoPrice=()=>{
+        Swal.fire({
+            title: 'El examen que eligio no cuenta con un precio',
+            icon: 'warning',
+          })
+    }
+
+    const examYaAgregado=()=>{
+        Swal.fire({
+            title: 'El examen que eligio, ya esta agregado',
+            icon: 'warning',
+          })
+    }
+
+    const examNoAgregado=()=>{
+        Swal.fire({
+            title: 'Examen no registrado',
+            icon: 'warning',
+          })
+    }
+
+    
+
     const agregarExamen = (id: any, code: any) => {
         const examen = listaPrecioData.examinations.find((x: any) => x.id == id);
         if (examen != undefined) {
@@ -690,13 +738,13 @@ export default function TbEditarCita() {
                     let aux = rowsAsignar;
                     setRowsAsignar(aux.filter((x: any) => x.id != examen.id))
                 } else {
-                    alert("El examen que eligio no cuenta con un precio")
+                    examNoPrice()
                 }
             } else {
-                alert("El examen que eligio, ya esta agregado")
+               examYaAgregado()
             }
         } else {
-            alert("Examen no registrado")
+           examNoAgregado()
         }
     }
     const setCalcularPrecio = (fila: any, descuento: any) => {
@@ -721,22 +769,112 @@ export default function TbEditarCita() {
         setPrecio(acumPrice)
         setPrecioFinal(acumPrice - descuento);
     }
+
+    const errSede=()=>{
+        Swal.fire({
+            title: 'Seleccione una sede',
+            icon: 'warning',
+          })
+    }
+
+    const errDescuent=()=>{
+        Swal.fire({
+            title: 'Ingrese un descuento correcto',
+            icon: 'warning',
+          })
+    }
+
+    const errDate=()=>{
+        Swal.fire({
+            title: 'Fecha incorrecta',
+            icon: 'warning',
+          })
+    }
+    
+    const errHour=()=>{
+        Swal.fire({
+            title: 'Hora incorrecta',
+            icon: 'warning',
+          })
+    }
+
+    const editCita=()=>{
+        Swal.fire({
+            title: 'Cita editada con exito',
+            icon: 'success',
+          })
+    }
+
+
+    const errEditCita=()=>{
+        Swal.fire({
+            title: 'La cita no fue editada',
+            icon: 'success',
+          })
+    }
+
+    const Referen=()=>{
+        Swal.fire({
+            title: 'Seleccione una referencia',
+            icon: 'warning',
+          })
+    }
+
+    const Referencode=()=>{
+        Swal.fire({
+            title: 'Escriba un codigo de referencia',
+            icon: 'warning',
+          })
+    }
+
+    const ObservaReferente=()=>{
+        Swal.fire({
+            title: 'Ingrese las observaciones del referente',
+            icon: 'warning',
+          })
+    }
+
+    const MedicoAgrega=()=>{
+        Swal.fire({
+            title: 'Elija el medico',
+            icon: 'warning',
+          })
+    }
+
     const guardarCita = () => {
         const hoy = moment().format("YYYY-MM-DD");
         if (sede == "") {
-            alert("Seleccione una sede");
+            errSede()
+            return;
+        }
+        if (referencia == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            Referen()
+            return;
+        }
+        if (codigoReferencia == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            Referencode()
+            return;
+        }
+        if (medico == "") {
+            //alert("Hora incorrecta");
+            //setAbrirErrorHora(true);
+            MedicoAgrega()
             return;
         }
         if (isNaN(precioFinal) || precioFinal <= 0) {
-            alert("Ingrese un descuento correcto");
+            errDescuent()
             return;
         }
         if (fecha < hoy) {
-            alert("Fecha incorrecta");
+            errDate()
             return;
         }
         if (hora == "") {
-            alert("Hora incorrecta");
+            errHour()
             return;
         }
 
@@ -761,17 +899,41 @@ export default function TbEditarCita() {
         }
         editAppointmentApi(data, id).then(x => {
             if (x.status) {
-                alert(x.message.text)
+                editCita()
                 window.location.href = "/apps/appointments"
             } else {
-                alert(x.message.text)
+                errEditCita()
                 return;
             }
         })
     }
+
+    const errNombMedico=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del medico',
+            icon: 'warning',
+            target: '#custom-target2',
+          })
+    }
+
+    const medicoNoCreate=()=>{
+        Swal.fire({
+            title: 'El medico no fue agregado',
+            icon: 'warning',
+            target: '#custom-target2',
+          })
+    }
+
+    const medicoCreate=()=>{
+        Swal.fire({
+            title: 'El medico fue agregado',
+            icon: 'success',
+          })
+    }
+
     const crearNuevoMedico = () => {
         if (nombreMedico == "") {
-            alert("Ingrese nombre del medico")
+            errNombMedico()
             return
         }
         let data = {
@@ -779,20 +941,44 @@ export default function TbEditarCita() {
         }
         addDoctorApi(data).then((x: any) => {
             if (x.status) {
-                alert(x.message.text)
+                medicoCreate()
                 getDoctorApi().then((ag: any) => {
                     setMedicoList(ag.data);
                 });
                 setAbrirAgregarMedico(false)
             } else {
-                alert(x.message.text)
+                medicoNoCreate()
                 return;
             }
         })
     }
+
+    const errNombReferer=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del referente',
+            icon: 'warning',
+            target: '#custom-target3',
+          })
+    }
+
+    const ReferenteAgreg=()=>{
+        Swal.fire({
+            title: 'Referente agregado',
+            icon: 'success',
+          })
+    }
+
+    const ReferenteNoAgreg=()=>{
+        Swal.fire({
+            title: 'El referente no fue agregado',
+            icon: 'warning',
+          })
+    }
+
+
     const crearNuevoReferente = () => {
         if (nombreReferencia == "") {
-            alert("Ingrese nombre del referente")
+            errNombReferer()
             return
         }
         let data = {
@@ -800,19 +986,19 @@ export default function TbEditarCita() {
         }
         addRefererApi(data).then((x: any) => {
             if (x.status) {
-                alert(x.message.text)
+                ReferenteAgreg()
                 getRefererApi().then((ag: any) => {
                     setReferenciaList(ag.data);
                 });
                 setAbrirAgregarReferencia(false)
             } else {
-                alert(x.message.text)
+                ReferenteNoAgreg()
                 return;
             }
         })
     }
     return (
-        <div className='tabla-componente card-table-general'>
+        <div className='tabla-componente card-table'>
             <Contenido>
                 <Grid container style={{ alignItems: "center" }}>
                     <Grid container item  >
@@ -840,6 +1026,7 @@ export default function TbEditarCita() {
                 <br></br>
                 <div>
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
+                      <Paper sx={{ width: '100%', mb: 20 }}>
                         <div>
                             <TabContext value={values}>
                                 <Box >
@@ -880,7 +1067,7 @@ export default function TbEditarCita() {
                                                         },
                                                         endAdornment: (
                                                             <InputAdornment position="end" >
-                                                                <SearchSharpIcon onClick={() => buscarPaciente(numDoc)} />
+                                                                <SearchSharpIcon />
                                                             </InputAdornment>
                                                         ),
                                                     }}
@@ -1130,6 +1317,7 @@ export default function TbEditarCita() {
                                 </TabPanel>
                             </TabContext>
                         </div>
+                       </Paper>
                     </CardContent>
                 </div >
                 <div>
@@ -1283,7 +1471,7 @@ export default function TbEditarCita() {
                     </Modal>
                 </div>
                 <div>
-                    <Modal
+                    <Modal id="custom-target2"
                         keepMounted
                         open={abrirAgregarMedico}
                         onClose={handleCloseAbrirAgregarMedico}
@@ -1291,7 +1479,7 @@ export default function TbEditarCita() {
                         aria-describedby="keep-mounted-modal-description"
                     >
                         <Box sx={style}>
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Nueva colegiatura</InputLabel >
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Crear nuevo medico</InputLabel >
 
                             <Grid container item xs mt={2.5}>
                                 <TextField fullWidth id="outlined-basic" label="Nombre del Médico" variant="outlined" value={nombreMedico} onChange={handleChangeNombreMedico} />
@@ -1311,7 +1499,7 @@ export default function TbEditarCita() {
                     </Modal>
                 </div>
                 <div>
-                    <Modal
+                    <Modal id="custom-target3"
                         keepMounted
                         open={abrirAgregarReferencia}
                         onClose={handleCloseAbrirAgregarReferencia}

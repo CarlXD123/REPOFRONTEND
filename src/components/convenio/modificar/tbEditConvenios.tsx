@@ -1,10 +1,11 @@
-import { Button, CardContent, Grid, InputLabel, MenuItem, TextField } from "@mui/material";
+import { Button, CardContent, Grid, InputLabel, MenuItem, TextField, Modal} from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import { Contenido } from "../../Home";
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
 import { editAgreementApi, getAgreementApi, getTypeAgreementsAllApi, saveAgreementApi } from "../../../api";
 import { Link, useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 
 export default function TbEditConvenios() {
@@ -20,8 +21,10 @@ export default function TbEditConvenios() {
     const [ruc, setRuc] = React.useState<any>('');
     const [correo, setCorreo] = React.useState<any>('');
     const [descripcion, setDescripcion] = React.useState<any>('');
+    const [abrirUpdateConvenio, setAbrirActualizarConvenio] = React.useState<any>(false);
     //#endregion
 
+    
     //#region handles de Vistas
     const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTipo(event.target.value);
@@ -45,6 +48,37 @@ export default function TbEditConvenios() {
         setDescripcion(event.target.value);
     };
     //#endregion
+
+    const handleCloseAbrirActualizar = () => {
+        setAbrirActualizarConvenio(false);
+    }
+
+    var convenioEdit=()=>{
+        Swal.fire({
+            title: 'El convenio fue editado exitosamente',
+            icon: 'success',
+        })
+    }
+
+    var convenioDenied=()=>{
+        Swal.fire({
+            title: 'El convenio no fue editado',
+            icon: 'warning',
+        })
+    }
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 850,
+        bgcolor: 'white',
+        border: '1px solid #white',
+        borderRadius: "15px",
+        boxShadow: 24,
+        p: 4,
+    };
 
     React.useEffect(() => {
         //#region llamadas al servicio
@@ -90,10 +124,13 @@ export default function TbEditConvenios() {
             "TypeAgreementId": tipo
         }, id).then((ag: any) => {
             if (ag.status) {
-                alert(ag.message.text)
+                //alert(ag.message.text)
+                //setAbrirActualizarConvenio(true);
+                convenioEdit()
                 window.location.href = '/apps/agreements'
             } else {
-                alert(ag.message.text)
+                //alert(ag.message.text)
+                convenioDenied()
             }
         })
     }
@@ -106,13 +143,13 @@ export default function TbEditConvenios() {
                         <Link to={"/apps/agreements"}>
                             <div style={{ display: "flex", alignItems: "center" }} >
                                 <KeyboardBackspaceRoundedIcon style={{ color: "white", fontSize: "1.3rem", cursor: "pointer" }}></KeyboardBackspaceRoundedIcon>
-                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convernios</InputLabel >
+                                <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.3rem", paddingLeft: "4px", cursor: "pointer" }} >Convenios</InputLabel >
                             </div>
                         </Link>
                     </Grid>
                     <Grid container item style={{ alignItems: "center" }} mt={1.5}>
                         <Grid item xs md={8} >
-                            <div style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400" }} className="text-responsive-edit" >Editar Convernio</div >
+                            <div style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400" }} className="text-responsive-edit" >Editar Convenio</div >
                         </Grid>
                         <Grid item xs md={4} mt={1.5}>
                             <Button onClick={guardar} variant="contained" style={{ width: '20.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Guardar</Button>
@@ -170,6 +207,32 @@ export default function TbEditConvenios() {
                         </Box>
                     </CardContent>
                 </div >
+
+
+                <div>
+                    <Modal
+                        keepMounted
+                        open={abrirUpdateConvenio}
+                        onClose={handleCloseAbrirActualizar}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "green", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Convenio Actualizado!!!</InputLabel >
+                            <Grid container item mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={9} >
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Button onClick={handleCloseAbrirActualizar} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cerrar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
             </Contenido>
         </div>
     )

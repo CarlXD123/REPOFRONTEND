@@ -10,12 +10,14 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { getFilterExamApi, getPagedExaminationsApi } from '../../api';
+import { getFilterExamApi, getPagedExaminationsApi, deleteExaminationApi } from '../../api';
 import { Button, Grid, InputLabel, Modal, Tab, TextField, Tooltip } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
 import PlagiarismRoundedIcon from '@mui/icons-material/PlagiarismRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2';
 
 interface Data {
   codigo: string;
@@ -176,6 +178,7 @@ export default function TbExamenes({ busquedaex }: any) {
   const [nombreExamen, setNombreExamen] = React.useState<string>("");
   const [servicioExamen, setServicioExamen] = React.useState<string>("");
   const [indicacionesExamen, setIndicacionesExamen] = React.useState<string>("");
+  const [idBorrar, setId] = React.useState<any>([]);
 
   const [tiposMuestra, setTiposMuestra] = React.useState<string>("");
   const [volumen, setVolumen] = React.useState<string>("");
@@ -221,30 +224,66 @@ export default function TbExamenes({ busquedaex }: any) {
   }
 
 
+  var DeleteExam=()=>{
+    Swal.fire({
+        title: 'Examen - Eliminado exitosamente!!!',
+        icon: 'success',
+      })
+  }
+
+  var DeleteExamError=()=>{
+    Swal.fire({
+        title: 'Examen - Error al eliminar!!!',
+        icon: 'warning',
+      })
+  }
+
+
+
+  let aux = rows
   const sleep = (ms: any) => new Promise(resolve => setTimeout(resolve, ms))
-  const handleDelete = async (id: any) => {
+  const handleDelete = async (id: any, id2: any) => {
     console.log(id);
-    var opcion = window.confirm("Realmente desea eliminar el examen?"+ id)
-    if(opcion){
-      try {
-       
-        let aux = rows
-        setRows([])
-        await sleep(50)
-        setRows(aux)
-        fetch('http://localhost:3000/api/examination/' + id, {
-         method: 'DELETE',
-        })
-        .then(res => {
-        return res.json()
-        }) 
-        .then(data => console.log(data))
-        setRows(aux.filter((row: any) => row.id !== id));
-      } catch(error) {
-           console.error(error)
-      }
-      
+    var DeleteExamination=()=>{
+      Swal
+      .fire({
+          title: "Desea eliminar el examen: "+id2+"?",
+          showCancelButton: true,
+          cancelButtonColor: '#0C3DA7',
+          confirmButtonColor: '#FB0909',
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+      })
+      .then(resultado => {
+          if (resultado.value) {
+              // Hicieron click en "Sí"
+              try {
+                setRows([])
+                //await sleep(50)
+                 
+                setRows(aux)
+  
+                deleteExaminationApi(id).then((x: any) => {
+                  setId(x.data.id)
+                  //setId(x.data.name)
+                });
+          
+                setRows(aux.filter((row: any) => row.id !== id));
+          
+              } catch(error) {
+                 console.error(error)
+                 DeleteExamError()
+                 
+              }
+              DeleteExam()
+              //setAbrirDeleteConfirmConvenio(true);
+          } else {
+              // Dijeron que no
+              console.log("*NO se elimina el convenio");
+          }
+      });
     } 
+    DeleteExamination()
   };
 
   React.useEffect(() => {
@@ -332,7 +371,7 @@ export default function TbExamenes({ busquedaex }: any) {
   };
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 12 }} className="card-table">
+      <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
             sx={{ minWidth: 700 }}
@@ -401,8 +440,8 @@ export default function TbExamenes({ busquedaex }: any) {
 
                           <div style={{ paddingLeft: "5px" }}>
                             <Tooltip title="Borrar Examen" followCursor>
-                              <Button onClick={() => handleDelete(row.id)}  variant="contained" className='boton-icon'>
-                                
+                              <Button onClick={() => handleDelete(row.id, row.nombre)}  variant="contained" className='boton-icon'>
+                                <DeleteIcon />
                               </Button>
                             </Tooltip>
                           </div>

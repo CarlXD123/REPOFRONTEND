@@ -6,11 +6,14 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
-import { editExaminations, getAgreementsAllApi, getAgreementsListPriceApi, getDistrictsForProvince, getDoctorApi, getExaminationApi, getExaminationValuesByExamId, getHeadquartersAllApi, getMethodsAllApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi, getUnitsAllApi, saveExaminationApi } from "../../../api";
+import { editExaminations, getUnitApi, getAgreementsAllApi, saveServiceApi , saveMethodApi, saveUnitApi, getAgreementsListPriceApi, getDistrictsForProvince, getDoctorApi, getExaminationApi, getExaminationValuesByExamId, getHeadquartersAllApi, getMethodsAllApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi, getUnitsAllApi, saveExaminationApi } from "../../../api";
 import { Link, useParams } from "react-router-dom";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
+import Swal from 'sweetalert2';
+
+
 export default function TbEditarExamen() {
 
     const { id } = useParams();
@@ -49,6 +52,17 @@ export default function TbEditarExamen() {
 
     const [abrirValores, setAbrirValores] = React.useState<any>(false);
     const [editNombreValores, setEditNombreValores] = React.useState<any>('');
+    const [editUnit, setEditUnit] = React.useState<any>('');
+    const [editmethod, setEditMethod] = React.useState<any>('');
+    const [valorunit, setValorUnit] = React.useState<any>('');
+    const [abrirUnit, setAbrirUnit] = React.useState<any>(false);
+    const [nombreUnit, setNombreUnit] = React.useState<any>('');
+    const [abrirMethod, setAbrirMethod] = React.useState<any>(false);
+    const [nombreMethod, setNombreMethod] = React.useState<any>('');
+    const [descripcionMethod, setDescripcionMethod] = React.useState<any>('');
+    const [abrirService, setAbrirService] = React.useState<any>(false);
+    const [nombreService, setNombreService] = React.useState<any>('');
+    const [descripcionService, setDescripcionService] = React.useState<any>('');
 
     const [abrirReferencias, setAbrirReferencias] = React.useState<any>(false);
     const [editNombreReferencias, setEditNombreReferencias] = React.useState<any>('');
@@ -58,6 +72,7 @@ export default function TbEditarExamen() {
     const [rowReferenciaIndexSelected, setRowReferenciaIndexSelected] = React.useState<any>('');
     //#endregion
 
+    console.log(rowValorIndexSelected)
     //#region handles de Vistas
     const handleChangeEditNombreReferencias = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEditNombreReferencias(event.target.value);
@@ -65,14 +80,24 @@ export default function TbEditarExamen() {
     const handleCloseReferencias = () => {
         setAbrirReferencias(false);
     }
+
     const handleOpenReferencias = (index: any, name: any) => {
         setEditNombreReferencias(name)
         setRowReferenciaIndexSelected(index)
         setAbrirReferencias(true);
     }
+
+    var editnombreReferer=()=>{
+        Swal.fire({
+            title: 'Ingrese el nombre del examen de referencia',
+            icon: 'warning',
+        })
+    } 
+
     const editarExamenReferencia = () => {
         if (editNombreReferencias == "") {
-            alert("Ingrese el nombre del examen de referencia");
+            //alert("Ingrese el nombre del examen de referencia");
+            editnombreReferer()
             return;
         }
         rowsReferencialOrd[rowReferenciaIndexSelected].name = editNombreReferencias
@@ -92,29 +117,340 @@ export default function TbEditarExamen() {
     const handleChangeEditNombreValores = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEditNombreValores(event.target.value);
     };
+
+    const handleChangeEditUnit = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditUnit(event.target.value);
+    };
+
+    const handleChangeEditMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditMethod(event.target.value);
+    };
+
+    const handleChangeNombreUnit = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNombreUnit(event.target.value);
+    };
+
+    const handleChangeDescripcionMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDescripcionMethod(event.target.value)
+    };
+
+    const handleChangeNombreService = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNombreService(event.target.value);
+    };
+
+    const handleChangeDescripcionService = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDescripcionService(event.target.value)
+    };
+
+    const handleChangeNombreMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNombreMethod(event.target.value);
+    };
+
+
+    const handleCloseMethod = () => {
+        setAbrirMethod(false);
+    }
+
+    const handleCloseUnit = () => {
+        setAbrirUnit(false);
+    }
+
+    const handleCloseService = () => {
+        setAbrirService(false);
+    }
+
     const handleCloseValores = () => {
         setAbrirValores(false);
     }
-    const handleOpenValores = (index: any, name: any) => {
+    const handleOpenValores = (index: any, name: any, name2: any, name3: any) => {
         setEditNombreValores(name)
+        setEditUnit(name2)
+        setEditMethod(name3)
         setRowValorIndexSelected(index)
         setAbrirValores(true);
     }
-    const editarValorExam = () => {
-        if (editNombreValores == "") {
-            alert("Ingrese nombre del valor del examen");
+
+    const handleOpenUnit = () => {
+        setAbrirUnit(true);
+        setNombreUnit("");
+    }
+
+    const handleOpenMethod = () => {
+        setAbrirMethod(true);
+        setNombreMethod("");
+        setDescripcionMethod("");
+    }
+
+    const handleOpenService = () => {
+        setAbrirService(true);
+        setNombreService("");
+        setDescripcionService("");
+    }
+
+    var errorUnit=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre de la unidad',
+            icon: 'warning',
+            target: '#custom-target2',
+        })
+    }
+
+    var CreateUnit=()=>{
+        Swal.fire({
+            title: 'Unidad - Creada exitosamente!!!',
+            icon: 'success',
+          })
+    }
+
+    var CreateUnitError=()=>{
+        Swal.fire({
+            title: 'Unidad - No fue creada!!!',
+            icon: 'warning',
+          })
+    }
+
+    const crearUnit = () => {
+        if (nombreUnit == "") {
+            //alert("Ingrese nombre");
+            errorUnit()
             return;
         }
-        rowsValores[rowValorIndexSelected].name = editNombreValores
-        rowsValores[rowValorIndexSelected].action = "u"
-        rowsReferencialOrd.forEach((x: any) => {
-            if (rowsValores[rowValorIndexSelected].id == x.idV) {
-                x.nameV = editNombreValores
+        saveUnitApi({
+            name: nombreUnit
+        }).then((x: any) => {
+            if (x.status) {
+                //alert(x.message.text);
+                CreateUnit()
+                handleCloseUnit();
+                setNombreUnit("");
+                getUnitsAllApi().then((ag: any) => {
+                    settUnidadList(ag.data);
+                });
+            } else {
+                //alert(x.text);
+                CreateUnitError()
+                return;
             }
         })
-
-        setAbrirValores(false);
     }
+
+    var errorMethod=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre de la metodologia',
+            icon: 'warning',
+            target: '#custom-target3',
+        })
+    }
+
+    var errorMethodDes=()=>{
+        Swal.fire({
+            title: 'Ingrese descripcion de la metodologia',
+            icon: 'warning',
+            target: '#custom-target3',
+        })
+    }
+
+    var CreateMethod=()=>{
+        Swal.fire({
+            title: 'Metodologia - Creada exitosamente!!!',
+            icon: 'success',
+          })
+    }
+
+    var CreateMethodError=()=>{
+        Swal.fire({
+            title: 'Metodologia - No fue creado!!!',
+            icon: 'warning',
+          })
+    }
+
+    const crearMethod = () => {
+        if (nombreMethod == "") {
+            //alert("Ingrese nombre");
+            errorMethod()
+            return;
+        }
+        if (descripcionMethod == "") {
+            //alert("Ingrese descripcion");
+            errorMethodDes()
+            return;
+        }
+        saveMethodApi({
+            description: descripcionMethod,
+            name: nombreMethod
+        }).then((x: any) => {
+            if (x.status) {
+                //alert(x.message.text);
+                CreateMethod()
+                handleCloseMethod();
+                setNombreMethod("");
+                setDescripcionMethod("");
+                getMethodsAllApi().then((ag: any) => {
+                    setMetodologiaList(ag.data);
+                });
+            } else {
+                //alert(x.text);
+                CreateMethodError()
+                return;
+            }
+        })
+    }
+
+    var errorService=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del servicio',
+            icon: 'warning',
+            target: '#custom-target',
+        })
+    }
+
+    var errorServiceDes=()=>{
+        Swal.fire({
+            title: 'Ingrese la descripcion del servicio',
+            icon: 'warning',
+            target: '#custom-target',
+        })
+    }
+
+    var CreateService=()=>{
+        Swal.fire({
+            title: 'Servicio - Creado exitosamente!!!',
+            icon: 'success',
+          })
+    }
+
+    var CreateServiceError=()=>{
+        Swal.fire({
+            title: 'Servicio - No fue creado!!!',
+            icon: 'warning',
+          })
+    }
+
+    const crearServicio = () => {
+        if (nombreService == "") {
+            //alert("Ingrese nombre");
+            errorService()
+            return;
+        }
+        if (descripcionService == "") {
+            //alert("Ingrese descripcion");
+            errorServiceDes()
+            return;
+        }
+        saveServiceApi({
+            description: descripcionService,
+            name: nombreService
+        }).then((x: any) => {
+            if (x.status) {
+                //alert(x.message.text);
+                CreateService()
+                handleCloseService();
+                setNombreService("");
+                setDescripcionService("");
+                getServicesAllApi().then((ag: any) => {
+                    setServiciosList(ag.data);
+                });
+            } else {
+                //alert(x.text);
+                CreateServiceError()
+                return;
+            }
+        })
+    }
+
+    var editvalorExamn=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del valor del examen',
+            icon: 'warning',
+            target: '#tarjeta',
+        })
+    } 
+
+    var editMetodolo=()=>{
+        Swal.fire({
+            title: 'Ingrese la metodologia del examen',
+            icon: 'warning',
+            target: '#tarjeta',
+        })
+    } 
+
+    var editnombUnit=()=>{
+        Swal.fire({
+            title: 'Ingrese una unidad',
+            icon: 'warning',
+        })
+    } 
+
+    var editunitSucces=()=>{
+        Swal.fire({
+            title: 'Unidad modificada exitosamente',
+            icon: 'success',
+            target: '#tarjeta',
+        })
+    } 
+
+    var editmethodSucces=()=>{
+        Swal.fire({
+            title: 'Campos modificados exitosamente',
+            icon: 'success',
+            target: '#tarjeta',
+        })
+    } 
+
+    var editNombValSucces=()=>{
+        Swal.fire({
+            title: 'Valor del examen modificado exitosamente',
+            icon: 'success',
+            target: '#tarjeta',
+        })
+    } 
+
+    const editarCampos = () => {
+        if (editmethod== "") {
+            //alert("Ingrese nombre del valor del examen");
+            editMetodolo()
+            return;
+        }
+
+        if (editNombreValores == "") {
+            //alert("Ingrese nombre del valor del examen");
+            editvalorExamn()
+            return;
+        }
+
+        if (editUnit == "") {
+            editnombUnit()
+            return;
+        }
+
+        if (editmethod!= "") {
+            rowsValores[rowValorIndexSelected].methodology.id = editmethod 
+            rowsValores[rowValorIndexSelected].methodology.name = metodologiaList.filter((x: any) => x.id == editmethod)[0].name
+            rowsValores[rowValorIndexSelected].action = "u"
+        }
+        
+        if (editNombreValores != "") {
+            rowsValores[rowValorIndexSelected].name = editNombreValores
+            rowsValores[rowValorIndexSelected].action = "u"
+            rowsReferencialOrd.forEach((x: any) => {
+                if (rowsValores[rowValorIndexSelected].id == x.idV) {
+                    x.nameV = editNombreValores
+                }
+            })
+
+        }
+
+        if (editUnit != "") {
+            rowsValores[rowValorIndexSelected].unit.id = editUnit
+            rowsValores[rowValorIndexSelected].unit.name = unidadList.filter((x: any) => x.id == editUnit)[0].name
+            rowsValores[rowValorIndexSelected].action = "u"
+    
+        }
+
+        editmethodSucces()
+
+    }
+
     const EliminarValores = async (index: any) => {
         rowsValores[index].action = "d"
         let aux = rowsValores
@@ -139,9 +475,18 @@ export default function TbEditarExamen() {
         setRowIndexSelected(index)
         setAbrirGrupo(true);
     }
+
+    var editgroup=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del grupo',
+            icon: 'warning',
+        })
+    } 
+
     const editarGrupo = () => {
         if (editNombreGrupo == "") {
-            alert("Ingrese nombre del grupo");
+            //alert("Ingrese nombre del grupo");
+            editgroup()
             return;
         }
         rows[rowIndexSelected].name = editNombreGrupo
@@ -183,7 +528,6 @@ export default function TbEditarExamen() {
     };
     const handleChangeNomGrupoValorExm = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNomGrupoValorExm(event.target.value);
-        alert("Selecciono")
     };
     const handleChange = (event: ChangeEvent<{}>, newValue: any) => {
         setValues(newValue);
@@ -273,6 +617,7 @@ export default function TbEditarExamen() {
                 settUnidadList(ag.data)
             }
         })
+        
         getExaminationApi(id).then((x: any) => {
             setNombres(x.data.name)
             setServicios(x.data.service.id)
@@ -303,14 +648,13 @@ export default function TbEditarExamen() {
         })
         //#endregion
     }, []);
-
     //#region Tabla Examenes Agregados
+    console.log(editUnit)
     interface Data {
         codigo: string;
         name: string;
         options: string;
     }
-
     function createData(
         codigo: string,
         name: string,
@@ -468,10 +812,18 @@ export default function TbEditarExamen() {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+
+    var Grupito=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del grupo',
+            icon: 'warning',
+        })
+    }  
     //#endregion
     const crearGrupo = () => {
         if (nomGrupo == "") {
-            alert("Ingrese nombre");
+            //alert("Ingrese nombre");
+            Grupito()
             return;
         }
         let aux = rows;
@@ -653,7 +1005,7 @@ export default function TbEditarExamen() {
     const [pageValores, setPageValores] = React.useState(0);
     const [rowsPerPageValores, setRowsPerPageValores] = React.useState(5);
     const [rowsValores, setRowsValores] = React.useState<any[]>([]);
-
+    console.log(rowsValores)
     const handleRequestSortValores = (
         event: React.MouseEvent<unknown>,
         property: keyof DataValores,
@@ -672,10 +1024,18 @@ export default function TbEditarExamen() {
     const emptyRowsValores =
         pageValores > 0 ? Math.max(0, (1 + pageValores) * rowsPerPageValores - rowsValores.length) : 0;
 
+
+    var GrupoValor=()=>{
+        Swal.fire({
+            title: 'Seleccione un grupo',
+            icon: 'success',
+        })
+    }
     //#endregion
     const crearValorExamen = () => {
         if (rows.length == 0) {
-            alert("Seleccione un grupo");
+            //alert("Seleccione un grupo");
+            GrupoValor()
             return;
         }
         let aux = rowsValores;
@@ -878,7 +1238,7 @@ export default function TbEditarExamen() {
     const [rowsReferencialOrd, setRowsReferencialOrd] = React.useState<any[]>([]);
 
 
-
+   console.log(rowsReferencialOrd)
     const handleRequestSortReferencial = (
         event: React.MouseEvent<unknown>,
         property: keyof DataReferencial,
@@ -898,14 +1258,28 @@ export default function TbEditarExamen() {
         pageReferencial > 0 ? Math.max(0, (1 + pageReferencial) * rowsPerPageReferencial - rowsReferencial.length) : 0;
 
 
+    var EditValorReferencial=()=>{
+        Swal.fire({
+            title: 'Ingrese grupos',
+            icon: 'warning',
+        })
+    }
+
+    var EditValorReferencial2=()=>{
+        Swal.fire({
+            title: 'Ingrese valor del examen',
+            icon: 'warning',
+        })
+    }
     //#endregion
     const crearValoresReferenciales = () => {
         if (rows.length == 0) {
-            alert("Ingrese grupos");
+            //alert("Ingrese grupos");
+            EditValorReferencial()
             return;
         }
         if (rowsValores.length == 0) {
-            alert("Ingrese Valores del examen");
+            EditValorReferencial2()
             return;
         }
         let aux = rowsReferencial;
@@ -948,6 +1322,34 @@ export default function TbEditarExamen() {
                 });
         }
         return refValues;
+    }
+
+    var EditExamination=()=>{
+        Swal.fire({
+            title: 'Examen - Modificado exitosamente!!!',
+            icon: 'success',
+          })
+    }
+
+    var EditExaminationError=()=>{
+        Swal.fire({
+            title: 'Examen - No modificado!!!',
+            icon: 'warning',
+          })
+    }
+
+    var errorNameExam=()=>{
+        Swal.fire({
+            title: 'Ingrese nombre del examen',
+            icon: 'warning',
+        })
+    }
+
+    var errorServicios=()=>{
+        Swal.fire({
+            title: 'Ingrese un servicio',
+            icon: 'warning',
+        })
     }
 
     const registarExamen = () => {
@@ -1004,7 +1406,7 @@ export default function TbEditarExamen() {
 
             data.push(objGrupo)
         }
-        console.log(data)
+       
 
         let registro = {
             id: id,
@@ -1024,16 +1426,18 @@ export default function TbEditarExamen() {
         }
         editExaminations(registro).then((x: any) => {
             if (x.status) {
-                alert(x.message.text)
+                EditExamination()
                 window.location.href = '/apps/examinations'
-            } else {
-                alert(x.message.text)
+            } else if(nombres ==""){
+                errorNameExam()
+            } else if(servicios ==""){
+                errorServicios()
             }
         })
     }
 
     return (
-        <div className='tabla-componente'>
+        <div className='tabla-componente card-table'>
             <Contenido >
                 <Grid container style={{ alignItems: "center" }}>
                     <Grid container  >
@@ -1046,7 +1450,7 @@ export default function TbEditarExamen() {
                     </Grid>
                     <Grid container style={{ alignItems: "center" }} mt={1.5}>
                         <Grid item xs>
-                            <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "2.2rem" }} >Nuevo exámen</InputLabel >
+                            <InputLabel style={{ color: "white", fontFamily: "Quicksand", fontWeight: "400", fontSize: "2.2rem" }} >Editar exámen</InputLabel >
                         </Grid>
                         <Grid item xs>
                             <Button onClick={registarExamen} variant="contained" style={{ width: '20.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Guardar</Button>
@@ -1083,6 +1487,11 @@ export default function TbEditarExamen() {
                                                 <TextField id="outlined-basic" label="Servicio *" variant="outlined"
                                                     select fullWidth value={servicios} onChange={handleChangeServicios}
                                                 >
+
+
+                                                      <MenuItem value="">
+                                                        <Button onClick={handleOpenService} variant="contained" style={{ width: '20.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Crear Nuevo</Button>
+                                                      </MenuItem>
                                                     {serviciosList.map((row: any, index: any) => {
                                                         return (
                                                             <MenuItem key={index} value={row.value}>{row.name}</MenuItem>
@@ -1237,6 +1646,11 @@ export default function TbEditarExamen() {
                                                                     <TextField id="outlined-basic" label="Unidad" variant="outlined"
                                                                         select fullWidth value={unidad} onChange={handleChangeUnidad}
                                                                     >
+
+                                                                        <MenuItem value="">
+                                                                          <Button onClick={handleOpenUnit} variant="contained" style={{ width: '20.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Crear Nuevo</Button>
+                                                                        </MenuItem>
+
                                                                         {unidadList.map((row: any, index: any) => {
                                                                             return (
                                                                                 <MenuItem key={index} value={row.id}>{row.name}</MenuItem>
@@ -1248,6 +1662,10 @@ export default function TbEditarExamen() {
                                                                     <TextField id="outlined-basic" label="Metodologia" variant="outlined"
                                                                         select fullWidth value={metodologia} onChange={handleChangeMetodologia}
                                                                     >
+
+                                                                        <MenuItem value="">
+                                                                          <Button onClick={handleOpenMethod} variant="contained" style={{ width: '20.5ch', height: '4.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.15rem" }}>Crear Nuevo</Button>
+                                                                        </MenuItem>
                                                                         {metodologiaList.map((row: any, index: any) => {
                                                                             return (
                                                                                 <MenuItem key={index} value={row.id}>{row.name}</MenuItem>
@@ -1322,7 +1740,7 @@ export default function TbEditarExamen() {
                                                                                                 <TableCell align="left">
                                                                                                     <div style={{ display: "flex" }}>
                                                                                                         <div style={{ paddingRight: "5px" }}>
-                                                                                                            <Button onClick={() => handleOpenValores(index, row.name)} variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> EDITAR</Button>
+                                                                                                            <Button onClick={() => handleOpenValores(index, row.name, row.unit.id, row.methodology.id)} variant="contained" style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1rem" }}> EDITAR</Button>
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </TableCell>
@@ -1382,7 +1800,7 @@ export default function TbEditarExamen() {
                                                         <Grid container item xs={12}>
                                                             <Grid container spacing={2} mt={1}>
                                                                 <Grid item xs={4} >
-                                                                    <TextField id="outlined-basic" label="Servicio *" variant="outlined"
+                                                                    <TextField id="outlined-basic" label="Valor Examen *" variant="outlined"
                                                                         select fullWidth value={valoresReferenciales} onChange={handleChangeValoresDescripcion}
                                                                     >
                                                                         {rowsValores.map((row: any, index: any) => {
@@ -1578,7 +1996,7 @@ export default function TbEditarExamen() {
                     </Modal>
                 </div>
                 <div>
-                    <Modal
+                    <Modal id="tarjeta"
                         keepMounted
                         open={abrirValores}
                         onClose={handleCloseValores}
@@ -1586,10 +2004,37 @@ export default function TbEditarExamen() {
                         aria-describedby="keep-mounted-modal-description"
                     >
                         <Box sx={style}>
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Editar valor de examen</InputLabel >
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Editar campos del examen</InputLabel >
 
                             <Grid container item xs mt={2.5}>
                                 <TextField fullWidth id="outlined-basic" label="Nombre" variant="outlined" value={editNombreValores} onChange={handleChangeEditNombreValores} />
+                            </Grid>
+                            <br></br>
+                            
+                            <Grid container item xs mt={2.5}>
+                                <TextField id="outlined-basic" label="Unidad" variant="outlined"
+                                  select fullWidth value={editUnit} onChange={handleChangeEditUnit}
+                                >
+                                  {unidadList.map((row: any, index: any) => {
+                                  return (
+                                    <MenuItem key={index} value={row.id}>{row.name}</MenuItem>
+                                  )
+                                  })}
+                                </TextField>
+                            </Grid>
+                        
+                            <br></br>
+                        
+                            <Grid container item xs mt={2.5}>
+                            <TextField id="outlined-basic" label="Metodologia" variant="outlined"
+                                  select fullWidth value={editmethod} onChange={handleChangeEditMethod}
+                                >
+                                  {metodologiaList.map((row: any, index: any) => {
+                                  return (
+                                   <MenuItem key={index} value={row.id}>{row.name}</MenuItem>
+                                  )
+                                })}
+                                </TextField>
                             </Grid>
                             <Grid container item xs mt={2.5}>
                                 <Grid item xs={6} ></Grid>
@@ -1598,7 +2043,7 @@ export default function TbEditarExamen() {
                                         <Button onClick={handleCloseValores} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
                                     </Grid>
                                     <Grid item xs={6} >
-                                        <Button onClick={editarValorExam} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Editar</Button>
+                                        <Button onClick={editarCampos} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Editar</Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -1627,6 +2072,99 @@ export default function TbEditarExamen() {
                                     </Grid>
                                     <Grid item xs={6} >
                                         <Button onClick={editarExamenReferencia} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Editar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+                <div>
+                    <Modal id="custom-target"
+                        keepMounted
+                        open={abrirService}
+                        onClose={handleCloseService}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Nuevo Servicio</InputLabel >
+
+                            <Grid container item xs mt={2.5}>
+                                <TextField fullWidth id="outlined-basic" label="Nombre" variant="outlined" value={nombreService} onChange={handleChangeNombreService} />
+                            </Grid>
+                            <Grid container item xs mt={1.5}>
+                                <TextField fullWidth id="outlined-basic" label="Descripción" variant="outlined" value={descripcionService} onChange={handleChangeDescripcionService} />
+                            </Grid>
+                            <Grid container item xs mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={6} >
+                                        <Button onClick={handleCloseService} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
+                                    </Grid>
+                                    <Grid item xs={6} >
+                                        <Button onClick={crearServicio} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Guardar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+                <div>
+                    <Modal id="custom-target3"
+                        keepMounted
+                        open={abrirMethod}
+                        onClose={handleCloseMethod}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Nueva Metodologia</InputLabel >
+
+                            <Grid container item xs mt={2.5}>
+                                <TextField fullWidth id="outlined-basic" label="Nombre" variant="outlined" value={nombreMethod} onChange={handleChangeNombreMethod} />
+                            </Grid>
+                            <Grid container item xs mt={1.5}>
+                                <TextField fullWidth id="outlined-basic" label="Descripción" variant="outlined" value={descripcionMethod} onChange={handleChangeDescripcionMethod} />
+                            </Grid>
+                            <Grid container item xs mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={6} >
+                                        <Button onClick={handleCloseMethod} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
+                                    </Grid>
+                                    <Grid item xs={6} >
+                                        <Button onClick={crearMethod} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Guardar</Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </div>
+
+                <div>
+                    <Modal id="custom-target2"
+                        keepMounted
+                        open={abrirUnit}
+                        onClose={handleCloseUnit}
+                        aria-labelledby="keep-mounted-modal-title"
+                        aria-describedby="keep-mounted-modal-description"
+                    >
+                        <Box sx={style}>
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Nueva Unidad</InputLabel >
+
+                            <Grid container item xs mt={2.5}>
+                                <TextField fullWidth id="outlined-basic" label="Nombre" variant="outlined" value={nombreUnit} onChange={handleChangeNombreUnit} />
+                            </Grid>
+                            <Grid container item xs mt={2.5}>
+                                <Grid item xs={4} ></Grid>
+                                <Grid container item xs={8} spacing={2}>
+                                    <Grid item xs={6} >
+                                        <Button onClick={handleCloseUnit} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Cancelar</Button>
+                                    </Grid>
+                                    <Grid item xs={6} >
+                                        <Button onClick={crearUnit} variant="contained" style={{ backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1rem" }}>Guardar</Button>
                                     </Grid>
                                 </Grid>
                             </Grid>

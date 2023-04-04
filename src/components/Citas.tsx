@@ -12,10 +12,11 @@ class Citas extends React.Component<{ navigate: NavigateFunction }, any>{
         this.state = {
             buscarTexto: "",
             buscarTextoClone: "",
-            buscarSeleccionar: "name",
+            buscarSeleccionar: "name2",
             buscarSeleccionarClone: "",
         }
     }
+
     handleChange = (prop: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [prop]: event.target.value
@@ -29,19 +30,27 @@ class Citas extends React.Component<{ navigate: NavigateFunction }, any>{
             });
         }
     }
+
     buscarCitas = () => {
         this.setState({
             buscarTextoClone: this.state.buscarTexto,
             buscarSeleccionarClone: this.state.buscarSeleccionar
         });
     }
+
+    actualizar = () => {
+        this.setState({
+            buscarTextoClone: this.state.buscarTexto
+        });
+    }
+
     crearCita = () => {
         this.props.navigate('/apps/appointments/new');
     }
     render() {
         return (
-            <Paper sx={{ width: '100%', mb: 18 }}>
-            <div className='tabla-componente card-table-general'>
+            <Paper sx={{ width: '100%'}}>
+            <div className='tabla-componente card-table'>
                 <Contenido>
                     <div style={{ display: "flex" }} className="nav-tabla">
                         <Grid container item>
@@ -69,9 +78,8 @@ class Citas extends React.Component<{ navigate: NavigateFunction }, any>{
                                             }
                                         }}
                                     >
-                                        <MenuItem value={"name"}>Nombre</MenuItem>
-                                        <MenuItem value={"dni"}>DNI</MenuItem>
-                                        <MenuItem value={"passport"}>Pasaporte</MenuItem>
+                                        <MenuItem value={"name2"}>Nombre</MenuItem>
+                                        <MenuItem value={"dni2"}>N° Documento</MenuItem>
                                         <MenuItem value={"referencia"}>Referencia</MenuItem>
                                         <MenuItem value={"code"}>Codigo</MenuItem>
                                         <MenuItem value={"date"}>Fecha</MenuItem>
@@ -79,7 +87,7 @@ class Citas extends React.Component<{ navigate: NavigateFunction }, any>{
                                 </div>
                                 <div className="textfield-buscar-combo">
                                     <TextField fullWidth id="outlined-basic" variant="outlined"
-                                        placeholder="Ingrese contendio de busqueda"
+                                        placeholder="Ingrese contenido de busqueda"
                                         value={this.state.buscarTexto}
                                         onChange={this.handleChange('buscarTexto')}
                                         onKeyPress={this.buscarCitasEnter}
@@ -113,6 +121,8 @@ class Citas extends React.Component<{ navigate: NavigateFunction }, any>{
                         </Grid>
                     </div>
 
+                    <br></br>
+                    <br></br>
                     <br></br>
                     <div>
                         <TbCitas texto={this.state.buscarTextoClone} opcion={this.state.buscarSeleccionarClone} />

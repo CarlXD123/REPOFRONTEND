@@ -45,7 +45,7 @@ class Personal extends React.Component<{ navigate: NavigateFunction }, any>{
 
     render() {
         return (
-            <div className='tabla-componente card-table-general'>
+            <div className='tabla-componente card-table'>
                 <Contenido>
                     <div style={{ display: "flex" }} className="nav-tabla">
                         <Grid container item>
@@ -111,6 +111,8 @@ class Personal extends React.Component<{ navigate: NavigateFunction }, any>{
                         </Grid>
 
                     </div>
+                    <br></br>
+                    <br></br>
                     <br></br>
                     <div>
                         <TbPersonal  texto={this.state.buscarTextoClone} opcion={this.state.buscarSeleccionarClone} />

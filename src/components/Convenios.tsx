@@ -43,7 +43,7 @@ class Convenios extends React.Component<{ navigate: NavigateFunction }, any>{
     render() {
         return (
 
-            <div className='tabla-componente'>
+            <div className='tabla-componente card-table'>
                 <Contenido>
                     <div style={{ display: "flex" }} className="nav-tabla">
                         <Grid container item >
@@ -55,7 +55,8 @@ class Convenios extends React.Component<{ navigate: NavigateFunction }, any>{
                         <Grid container item className="textfield-buscar">
                             <TextField fullWidth id="outlined-basic" variant="outlined"
                                 placeholder="Buscar por nombre"
-                                value={this.state.buscar} onChange={this.handleChange('buscar')}
+                                value={this.state.buscar} 
+                                onChange={this.handleChange('buscar')}
                                 onKeyPress={this.buscarConvenioEnter}
                                 InputProps={{
                                     style: {
@@ -82,6 +83,8 @@ class Convenios extends React.Component<{ navigate: NavigateFunction }, any>{
                             </Tooltip>
                         </Grid>
                     </div>
+                    <br></br>
+                    <br></br>
                     <br></br>
                     <div>
                         <TbConvenios busqueda={this.state.buscarClone} />

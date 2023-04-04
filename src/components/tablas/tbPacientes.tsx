@@ -10,13 +10,17 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { getFilterPatientsApi, getPagedPatientsApi } from '../../api';
+import { getFilterPatientsApi, getPagedPatientsApi, deletePatientApi, editPatientApi } from '../../api';
 import { Button, Grid, InputLabel, Modal, Tab, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { nationality } from '../../constant';
 import PersonSearchRoundedIcon from '@mui/icons-material/PersonSearchRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
+import { text } from 'stream/consumers';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import Swal from 'sweetalert2';
 
 interface Data {
   dni: string;
@@ -176,7 +180,7 @@ export default function TbPacientes({ texto, opcion }: any) {
   const [orderBy, setOrderBy] = React.useState<string>("");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [rows, setRows] = React.useState<any>([]);
 
   const [abrirColegiatura, setAbrirColegiatura] = React.useState<any>(false);
@@ -200,6 +204,9 @@ export default function TbPacientes({ texto, opcion }: any) {
   const [correo, setCorreo] = React.useState<any>('');
   const [telMovil, setTelMovil] = React.useState<any>('');
   const [telFijo, setTelFijo] = React.useState<any>('');
+  const [id, setId] = React.useState<any>("");
+
+
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data,
@@ -224,7 +231,7 @@ export default function TbPacientes({ texto, opcion }: any) {
             genero: d.person.genderStr,
             estCivil: d.person.civilStatusStr,
             fechaNacimiento: d.person.birthDate,
-            nacionalidad: d.person.nationality,
+            nacionalidad: d.nacion.name,
 
             region: d.region.name,
             provincia: d.province.name,
@@ -238,6 +245,7 @@ export default function TbPacientes({ texto, opcion }: any) {
 
 
             id: d.person.id,
+            userid2: d.person.UserId,
             userid: d.user.id
           })
         });
@@ -248,11 +256,31 @@ export default function TbPacientes({ texto, opcion }: any) {
         let mapeado: any = [];
         ap.data.forEach((d: any) => {
           mapeado.push({
-            dni: d.typeDoc.dni,
             tipoDocumento: d.typeDoc.name,
+            dni: d.typeDoc.dni,
             nombreCompleto: d.person.name + " " + d.person.lastNameP + " " + d.person.lastNameM,
+            numHistoriaCli: d.person.historyNumber,
+            nombre: d.person.name,
+            apellidoPa: d.person.lastNameP,
+            apellidoMa: d.person.lastNameM,
+            genero: d.person.genderStr,
+            estCivil: d.person.civilStatusStr,
+            fechaNacimiento: d.person.birthDate,
+            nacionalidad: d.nacion.name,
+
+            region: d.region.name,
+            provincia: d.province.name,
+            distrito: d.district.name,
+            direcLugar: d.person.address,
+
+
+            correo: d.user.username,
+            telMovil: d.person.phoneNumber,
             telFijo: d.person.tlfNumber,
+
+
             id: d.person.id,
+            userid2: d.person.UserId,
             userid: d.user.id
           })
         });
@@ -277,6 +305,64 @@ export default function TbPacientes({ texto, opcion }: any) {
   const handleChangeValor = (event: React.ChangeEvent<{}>, newValue: any) => {
     setValues(newValue);
   };
+
+  const DeletePaciente=()=>{
+    Swal.fire({
+        title: 'Paciente eliminado correctamente!!!',
+        icon: 'success',
+      })
+  }
+
+
+  let aux = rows
+  const handleDelete = async (id: any, nombre: any) => {
+    console.log(id);
+    var DeleteClient=()=>{
+    Swal
+    .fire({
+        title: "Desea eliminar al paciente "+nombre+"?",
+        showCancelButton: true,
+        cancelButtonColor: '#0C3DA7',
+        confirmButtonColor: '#FB0909',
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+    })
+    .then(resultado => {
+        if (resultado.value) {
+            // Hicieron click en "Sí"
+            try {
+              setRows([])
+              //await sleep(50)
+               
+              setRows(aux)
+
+              deletePatientApi(id).then((x: any) => {
+                setId(x.data.id)
+                //setId(x.data.name)
+              });
+
+          
+              setRows(aux.filter((row: any) => row.userid2 !== id));
+        
+            } catch(error) {
+               console.error(error)
+               
+            }
+            DeletePaciente();
+        } else {
+            // Dijeron que no
+            console.log("*NO se elimina el convenio");
+        }
+    });
+  }
+   
+  DeleteClient()
+
+  };
+
+  rows.sort((a: any, b: any) => (
+    a.nombre > b.nombre ? 1 : a.nombre < b.nombre ? -1 : 0)
+  )
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
@@ -322,7 +408,7 @@ export default function TbPacientes({ texto, opcion }: any) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 12 }} className="card-table">
+      <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -394,6 +480,13 @@ export default function TbPacientes({ texto, opcion }: any) {
                               </Tooltip>
                             </Link>
                           </div>
+                          <div style={{ paddingLeft: "5px" }}>
+                            <Tooltip title="Borrar Paciente" followCursor>
+                              <Button onClick={() => handleDelete(row.userid2, row.nombreCompleto)}  variant="contained" className='boton-icon'>
+                                <DeleteIcon />
+                              </Button>
+                            </Tooltip>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -412,7 +505,7 @@ export default function TbPacientes({ texto, opcion }: any) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 15, 20]}
+          rowsPerPageOptions={[20, 100, 200]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -427,6 +520,7 @@ export default function TbPacientes({ texto, opcion }: any) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
       <div>
         <Modal
           keepMounted
