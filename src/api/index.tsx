@@ -1,9 +1,9 @@
 import { apiFetch } from "./apiFetch";
 
-const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND || "5000";
-const URL_BACKEND = process.env.REACT_APP_API_URL_BACKEND || "http://localhost";
+const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND || "6193";
+const URL_BACKEND = process.env.REACT_APP_API_URL_BACKEND || "https://repobackend.onrender.com";
 
-export const API_URL_BACKEND = `${URL_BACKEND}:${PORT_BACKEND}/api/`;
+export const API_URL_BACKEND = `${URL_BACKEND}/api/`;
 
 export const getPassword = (email: string) =>
   apiFetch(`user/forgot/password`, { method: "POST", body: email });
