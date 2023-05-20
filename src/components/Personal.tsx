@@ -114,9 +114,7 @@ class Personal extends React.Component<{ navigate: NavigateFunction }, any>{
                     <br></br>
                     <br></br>
                     <br></br>
-                    <div>
-                        <TbPersonal  texto={this.state.buscarTextoClone} opcion={this.state.buscarSeleccionarClone} />
-                    </div>
+                  
 
                 </Contenido>
             </div>
