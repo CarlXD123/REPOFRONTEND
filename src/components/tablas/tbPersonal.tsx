@@ -481,7 +481,7 @@ export default function TbPersonal({ texto, opcion }: any) {
     p: 4,
   };
   return (
-    <Box className="card-table-general">
+    <Box sx={{ width: '100%'}} className="card-table-general">
       <Paper sx={{ width: '100%', mb: 60 }}>
         <TableContainer>
           <Table
@@ -530,18 +530,7 @@ export default function TbPersonal({ texto, opcion }: any) {
                       >
                         {row.nombreCompleto}
                       </TableCell>
-                      <TableCell
-                        align="left"
-                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                      >
-                        {row.cargo}
-                      </TableCell>
-                      <TableCell
-                        align="left"
-                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
-                      >
-                        {row.sede}
-                      </TableCell>
+                  
                       <TableCell align="left">
                         <div style={{ display: "flex" }}>
                           <div style={{ paddingRight: "5px" }}>
