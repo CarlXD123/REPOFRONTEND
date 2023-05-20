@@ -482,24 +482,7 @@ export default function TbPersonal({ texto, opcion }: any) {
   };
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
-        
-        <TablePagination
-          rowsPerPageOptions={[5, 15, 20]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          labelRowsPerPage={"Filas por Pagina: "}
-          labelDisplayedRows={
-            ({ from, to, count }) => {
-              return '' + from + '-' + to + ' de ' + count
-            }
-          }
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+     
       <div>
         <Modal
           keepMounted
