@@ -482,7 +482,118 @@ export default function TbPersonal({ texto, opcion }: any) {
   };
   return (
     <Box sx={{ width: '100%' }}>
-     
+     <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={'medium'}
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+              rows.slice().sort(getComparator(order, orderBy)) */}
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row: any, index: any) => {
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      tabIndex={-1}
+                      key={index}
+                    >
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                      >
+                        {row.dni}
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                      >
+                        {row.tipoDocumento}
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                      >
+                        {row.nombreCompleto}
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                      >
+                        {row.telFijo}
+                      </TableCell>
+                      <TableCell align="left">
+                        <div style={{ display: "flex" }}>
+                          <div style={{ paddingRight: "5px" }}>
+                            <Tooltip title="Ver Paciente" followCursor>
+                              <Button onClick={() => handleOpenColegiatura(row)} variant="contained" className='boton-icon'>
+                                <PersonSearchRoundedIcon />
+                              </Button>
+                            </Tooltip>
+                          </div>
+                          <div style={{ paddingLeft: "5px" }}>
+                            <Link to={"/apps/patients/" + row.id + "/user/" + row.userid}>
+                              <Tooltip title="Editar" followCursor>
+                                <Button variant="contained" className='boton-icon'>
+                                  <ModeEditRoundedIcon />
+                                </Button>
+                              </Tooltip>
+                            </Link>
+                          </div>
+                          <div style={{ paddingLeft: "5px" }}>
+                            <Tooltip title="Borrar Paciente" followCursor>
+                              <Button onClick={() => handleDelete(row.userid2, row.nombreCompleto)}  variant="contained" className='boton-icon'>
+                                <DeleteIcon />
+                              </Button>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (53) * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[20, 100, 200]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          labelRowsPerPage={"Filas por Pagina: "}
+          labelDisplayedRows={
+            ({ from, to, count }) => {
+              return '' + from + '-' + to + ' de ' + count
+            }
+          }
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
       
     </Box>
 
