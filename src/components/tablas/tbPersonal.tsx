@@ -595,7 +595,7 @@ export default function TbPersonal({ texto, opcion }: any) {
         />
       </Paper>
       
-       <div>
+          <div>
         <Modal
           keepMounted
           open={abrirColegiatura}
