@@ -6,6 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
+import { Tabs } from '@mui/material';
 import { editEmployeeApi, getDistrictsForProvince, getEmployeeApi, getHeadquartersAllApi, getPagedTypeDocsApi, getProfessionsAllApi, getProvincesForRegion, getRegionsApi, getRolesApi, getSpecialitiesApi, getTuitionsApi, getTypeDocsApi, getTypeEmployeesApi, saveEmployeeApi, saveProfessionApi, saveSpecialityApi, saveTuitionApi, saveTypeEmployeeApi } from "../../../api";
 import { civilStatus, genders, typeDirections } from "../../../constant";
 import { Link, useParams } from "react-router-dom";
@@ -724,11 +725,7 @@ export default function TbModificarPersonal() {
             errorEspecialidad()
             return;
         }
-        if (descripcionEspecialidad == "") {
-            //alert("Ingrese descripcion");
-            errorDescripcionEspecialidad()
-            return;
-        }
+       
         saveSpecialityApi({
             description: descripcionEspecialidad,
             name: nombreEspecialidad
@@ -785,11 +782,7 @@ export default function TbModificarPersonal() {
             errorNombreCargo()
             return;
         }
-        if (descripcionCargo == "") {
-            //alert("Ingrese descripcion");
-            errorDescripcionCargo()
-            return;
-        }
+        
         saveTypeEmployeeApi({
             description: descripcionCargo,
             name: nombreCargo
@@ -848,11 +841,7 @@ export default function TbModificarPersonal() {
             errorProfesion()
             return;
         }
-        if (descripcionProfesion == "") {
-           //alert("Ingrese descripcion");
-           errorDescripcionProfesion()
-            return;
-        }
+        
         saveProfessionApi({
             description: descripcionProfesion,
             name: nombreProfesion
@@ -916,11 +905,7 @@ export default function TbModificarPersonal() {
             errorNombreColegiatura()
             return;
         }
-        if (descripcionColegiatura == "") {
-            //alert("Ingrese descripcion");
-            errorDescripcionColegiatura()
-            return;
-        }
+        
         saveTuitionApi({
             description: descripcionColegiatura,
             name: nombreColegiatura
@@ -932,6 +917,7 @@ export default function TbModificarPersonal() {
                 setDescripcionColegiatura("");
                 getTuitionsApi().then((ag: any) => {
                     setColegiatura1List(ag.data);
+                    setColegiatura2List(ag.data);
                 });
             } else {
                 guardarColegiaturaError()
@@ -987,12 +973,12 @@ export default function TbModificarPersonal() {
                         <div>
                             <TabContext value={values}>
                                 <Box >
-                                    <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange} >
+                                    <Tabs value={values} scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange} >
                                         <Tab className="h-64 normal-case" label="Datos personales" value="1" />
                                         <Tab className="h-64 normal-case" label="Domicilio" value="2" />
                                         <Tab className="h-64 normal-case" label="Profesión" value="3" />
                                         <Tab className="h-64 normal-case" label="Usuario" value="4" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1">
                                     <Box sx={{ flexGrow: 1 }}>
