@@ -612,7 +612,12 @@ export default function TbPersonal({ texto, opcion }: any) {
                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
                    <TabContext value={values} >
                       <Box>
-                       
+                       <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary">
+                          <Tab className="h-64 normal-case" label="Datos personales" value="1" />
+                          <Tab className="h-64 normal-case" label="Domicilio" value="2" />
+                          <Tab className="h-64 normal-case" label="Profesión" value="3" />
+                          <Tab className="h-64 normal-case" label="Usuario" value="4" />
+                       </TabList>
                       </Box>
                      <TabPanel value="1">
                 <Grid container style={{ alignItems: "center" }}>
