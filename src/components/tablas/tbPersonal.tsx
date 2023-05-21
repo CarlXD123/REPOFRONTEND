@@ -601,27 +601,20 @@ export default function TbPersonal({ texto, opcion }: any) {
         />
       </Paper>
        <div>
-            <Modal
-               keepMounted
-               open={abrirColegiatura}
-               onClose={handleCloseColegiatura}
-               aria-labelledby="keep-mounted-modal-title"
-               aria-describedby="keep-mounted-modal-description"
-            >
-               <Box sx={style}>
-                   <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
-                   <TabContext value={values} >
-                     <Box>
-                       <Grid>
-                        <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
-                           <Tab className="h-64 normal-case" label="Datos personales" value="1" />
-                           <Tab className="h-64 normal-case" label="Domicilio" value="2" />
-                           <Tab className="h-64 normal-case" label="Profesión" value="3" />
-                           <Tab className="h-64 normal-case" label="Usuario" value="4" />
-                        </TabList>
-                        </Grid>
-                     </Box>
-                     <TabPanel value="1">
+        <Modal
+          keepMounted
+          open={abrirColegiatura}
+          onClose={handleCloseColegiatura}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style}>
+            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
+            <TabContext value={values} >
+              <Box>
+               
+              </Box>
+              <TabPanel value="1">
                 <Grid container style={{ alignItems: "center" }}>
                   <Grid container item mt={0.5}>
                     <Grid item xs={6}>
@@ -713,10 +706,159 @@ export default function TbPersonal({ texto, opcion }: any) {
                   </Grid>
                 </Grid>
               </TabPanel>
-                   </TabContext>
-               </Box>
-            </Modal>
-       </div>
+              <TabPanel value="2">
+                <Grid container style={{ alignItems: "center" }}>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Departamento: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{region}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Provincia: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{provincia}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Distrito: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{distrito}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Tipo de dirección: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{direccion}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Punto de referencia: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{referencia}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Dirección: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{direcLugar}</InputLabel >
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </TabPanel>
+              <TabPanel value="3">
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Especialidad: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{especialidad}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Cargo: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{cargo}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Profesión: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{profesion}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Colegiatura 1: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{colegiatura1}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Nro de colegiatura: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{colegiaturaUno}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Colegiatura 2: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{colegiatura2}</InputLabel >
+                  </Grid>
+                </Grid>
+                <Grid container item mt={0.5}>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Nro de colegiatura: </InputLabel >
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{colegiaturaDos}</InputLabel >
+                  </Grid>
+                </Grid>
+                {firma == null ? "" :
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Firma digital: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <a href={`${firma}`} target="_blank">
+                        Firma actual  <b>(descargar)</b>
+                      </a>
+                    </Grid>
+                  </Grid>}
+              </TabPanel>
+              <TabPanel value="4">
+                <Grid container style={{ alignItems: "center" }}>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Correo: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{correo}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Roles: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{rol}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Sede: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{sede}</InputLabel >
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </Modal>
+      </div>
     </Box>
 
   );
