@@ -6,6 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
+import { Tabs } from '@mui/material';
 import { addRefererApi, addDoctorApi, editAppointmentApi, getAgreementsAllApi, getAgreementsListPriceApi, getAppointmentApi, getAppointmentsResultsApi, getDistrictsForProvince, getDoctorApi, getExaminationsAllApi, getExamValuesApi, getFilterExamApi, getHeadquartersAllApi, getPatienByDOCApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi } from "../../../api";
 import { Link, useParams } from "react-router-dom";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
@@ -1030,11 +1031,11 @@ export default function TbEditarCita() {
                         <div>
                             <TabContext value={values}>
                                 <Box >
-                                    <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange}>
+                                    <Tabs value={values} scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange}>
                                         <Tab className="h-64 normal-case" label="Datos de la Cita" value="1" />
                                         <Tab className="h-64 normal-case" label="Examenes" value="2" />
                                         <Tab className="h-64 normal-case" label="Fecha y Hora" value="3" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1">
                                     <Box sx={{ flexGrow: 1 }}>
