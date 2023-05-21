@@ -14,6 +14,7 @@ import { getFilterPatientsApi, getPagedPatientsApi, deletePatientApi, editPatien
 import { Button, Grid, InputLabel, Modal, Tab, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
+import { Tabs } from '@mui/material';
 import { nationality } from '../../constant';
 import PersonSearchRoundedIcon from '@mui/icons-material/PersonSearchRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
@@ -408,6 +409,8 @@ export default function TbPacientes({ texto, opcion }: any) {
 
   return (
     <Box sx={{ width: '100%' }}>
+      <br></br>
+      <br></br>
       <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
@@ -532,12 +535,12 @@ export default function TbPacientes({ texto, opcion }: any) {
           <Box sx={style}>
             <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del paciente</InputLabel >
             <TabContext value={values} >
-              <Box >
-                <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
+              <Box>
+                <Tabs value={values} scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
                   <Tab className="h-64 normal-case" label="Datos personales" value="1" />
                   <Tab className="h-64 normal-case" label="Domicilio" value="2" />
                   <Tab className="h-64 normal-case" label="Datos del paciente" value="3" />
-                </TabList>
+                </Tabs>
               </Box>
               <TabPanel value="1">
                 <Grid container style={{ alignItems: "center" }}>
