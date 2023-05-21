@@ -6,6 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
+import { Tabs } from '@mui/material';
 import { editExaminations, getUnitApi, getAgreementsAllApi, saveServiceApi , saveMethodApi, saveUnitApi, getAgreementsListPriceApi, getDistrictsForProvince, getDoctorApi, getExaminationApi, getExaminationValuesByExamId, getHeadquartersAllApi, getMethodsAllApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi, getUnitsAllApi, saveExaminationApi } from "../../../api";
 import { Link, useParams } from "react-router-dom";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
@@ -1467,13 +1468,13 @@ export default function TbEditarExamen() {
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                         <div>
                             <TabContext value={values}>
-                                <Box >
-                                    <TabList indicatorColor="primary" textColor="primary" onChange={handleChange} centered>
+                                <Box>
+                                    <Tabs value={values} indicatorColor="primary" textColor="primary" onChange={handleChange} centered>
                                         <Tab className="h-64 normal-case" label="Datos básicos" value="1" />
                                         <Tab className="h-64 normal-case" label="valores del examen" value="2" />
                                         <Tab className="h-64 normal-case" label="Valores Referenciales" value="3" />
                                         <Tab className="h-64 normal-case" label="Datos Técnicos" value="4" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1"
                                     style={{ overflowY: "scroll", maxHeight: "500px" }} >
