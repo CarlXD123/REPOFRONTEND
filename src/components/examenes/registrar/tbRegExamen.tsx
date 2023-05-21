@@ -6,6 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
+import { Tabs } from '@mui/material';
 import { getAgreementsAllApi, saveUnitApi, getAgreementsListPriceApi, saveMethodApi, getDistrictsForProvince, getDoctorApi, getHeadquartersAllApi, getMethodsAllApi, getProvincesForRegion, getRefererApi, getRegionsApi, getServicesAllApi, getTypeDocsApi, getUnitsAllApi, saveExaminationApi, saveServiceApi} from "../../../api";
 import { Link } from "react-router-dom";
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -1164,11 +1165,6 @@ export default function TbRegExamen() {
             errorMethod()
             return;
         }
-        if (descripcionMethod == "") {
-            //alert("Ingrese descripcion");
-            errorMethodDes()
-            return;
-        }
         saveMethodApi({
             description: descripcionMethod,
             name: nombreMethod
@@ -1248,11 +1244,7 @@ export default function TbRegExamen() {
             errorService()
             return;
         }
-        if (descripcionService == "") {
-            //alert("Ingrese descripcion");
-            errorServiceDes()
-            return;
-        }
+        
         saveServiceApi({
             description: descripcionService,
             name: nombreService
@@ -1362,13 +1354,13 @@ export default function TbRegExamen() {
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                         <div>
                             <TabContext value={values}>
-                                <Box >
-                                    <TabList indicatorColor="primary" textColor="primary" onChange={handleChange} centered>
+                                <Box>
+                                    <Tabs value={values} indicatorColor="primary" textColor="primary" onChange={handleChange} centered>
                                         <Tab className="h-64 normal-case" label="Datos básicos" value="1" />
                                         <Tab className="h-64 normal-case" label="valores del examen" value="2" />
                                         <Tab className="h-64 normal-case" label="Valores Referenciales" value="3" />
                                         <Tab className="h-64 normal-case" label="Datos Técnicos" value="4" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1"
                                     style={{ overflowY: "scroll", maxHeight: "500px" }} >
