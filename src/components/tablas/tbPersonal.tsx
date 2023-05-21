@@ -609,7 +609,7 @@ export default function TbPersonal({ texto, opcion }: any) {
                aria-describedby="keep-mounted-modal-description"
             >
                <Box sx={style}>
-           
+                   <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
                </Box>
             </Modal>
        </div>
