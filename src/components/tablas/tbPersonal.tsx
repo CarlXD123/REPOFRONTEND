@@ -612,7 +612,7 @@ export default function TbPersonal({ texto, opcion }: any) {
                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
                    <TabContext value={values} >
                       <Box>
-                         <TabList scrollButtons="auto" variant="scrollable" onChange={handleChangeValor}  >
+                         <TabList onChange={handleChangeValor}  >
                   
                          </TabList>
                       </Box>
