@@ -612,10 +612,100 @@ export default function TbPersonal({ texto, opcion }: any) {
                    <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
                    <TabContext value={values} >
                       <Box>
-                         <TabList onChange={handleChangeValor}  >
-                  
-                         </TabList>
+                       
                       </Box>
+                     <TabPanel value="1">
+                <Grid container style={{ alignItems: "center" }}>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Tipo de documento: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{tipoDoc}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Nro. de documento: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{numDoc}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Nombre: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{nombres}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Apellido paterno: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{apePa}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Apellido materno: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{apeMa}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Teléfono móvil: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{telMovil}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Teléfono fijo: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{telFijo}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Género: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{genero}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Estatus civil: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{estadoCivil}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Fecha de nacimiento: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{feNacimiento}</InputLabel >
+                    </Grid>
+                  </Grid>
+                  <Grid container item mt={0.5}>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} >Fecha de admisión: </InputLabel >
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }} >{feAdmision}</InputLabel >
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </TabPanel>
                    </TabContext>
                </Box>
             </Modal>
