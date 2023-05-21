@@ -595,13 +595,7 @@ export default function TbPersonal({ texto, opcion }: any) {
         />
       </Paper>
       
-          <div>
-            <Modal
           
-          >
-          
-            </Modal>
-          </div>
     </Box>
 
   );
