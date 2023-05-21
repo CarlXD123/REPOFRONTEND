@@ -553,7 +553,7 @@ export default function TbPersonal({ texto, opcion }: any) {
                             </Tooltip>
                           </div>
                           <div style={{ paddingLeft: "5px" }}>
-                            <Link to={"/apps/patients/" + row.id + "/user/" + row.userid}>
+                             <Link to={"/apps/employees/" + row.id + "/user/" + row.userid}>
                               <Tooltip title="Editar" followCursor>
                                 <Button variant="contained" className='boton-icon'>
                                   <ModeEditRoundedIcon />
