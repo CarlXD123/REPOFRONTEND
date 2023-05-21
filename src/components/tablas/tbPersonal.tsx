@@ -600,8 +600,18 @@ export default function TbPersonal({ texto, opcion }: any) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <div>
-       
+       <div>
+            <Modal
+               keepMounted
+               open={abrirColegiatura}
+               onClose={handleCloseColegiatura}
+               aria-labelledby="keep-mounted-modal-title"
+               aria-describedby="keep-mounted-modal-description"
+            >
+               <Box sx={style}>
+           
+               </Box>
+            </Modal>
        </div>
     </Box>
 
