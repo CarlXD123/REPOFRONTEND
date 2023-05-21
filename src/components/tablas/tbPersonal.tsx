@@ -596,16 +596,12 @@ export default function TbPersonal({ texto, opcion }: any) {
       </Paper>
       
           <div>
-        <Modal
-          keepMounted
-          open={abrirColegiatura}
-          onClose={handleCloseColegiatura}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
+            <Modal
           
-        </Modal>
-      </div>
+          >
+          
+            </Modal>
+          </div>
     </Box>
 
   );
