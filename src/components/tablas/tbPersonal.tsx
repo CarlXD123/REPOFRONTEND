@@ -530,11 +530,17 @@ export default function TbPersonal({ texto, opcion }: any) {
                       >
                         {row.nombreCompleto}
                       </TableCell>
+                     <TableCell
+                        align="left"
+                        style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
+                      >
+                        {row.cargo}
+                      </TableCell>
                       <TableCell
                         align="left"
                         style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.1rem" }}
                       >
-                        {row.telFijo}
+                        {row.sede}
                       </TableCell>
                       <TableCell align="left">
                         <div style={{ display: "flex" }}>
