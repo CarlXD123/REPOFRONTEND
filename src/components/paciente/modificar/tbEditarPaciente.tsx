@@ -6,6 +6,7 @@ import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceR
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
+import { Tabs } from '@mui/material';
 import { getDistrictsForProvince, savePatientApi, getUserApi, getPagedEmployeesApi, getPagedPatientsApi, getPagedTypeDocsApi, getNationAllApi, saveNationApi, getProvincesForRegion, getRegionsApi, getTypeDocsApi, getPatientApi, editPatientApi } from "../../../api";
 import { civilStatus, genders, nationality } from "../../../constant";
 import { Link, useParams } from "react-router-dom";
@@ -722,12 +723,12 @@ export default function TbEditarPaciente() {
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                         <div>
                             <TabContext value={values}>
-                                <Box >
-                                    <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange}>
+                                <Box>
+                                    <Tabs value={values} scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChange}>
                                         <Tab className="h-64 normal-case" label="Datos personales" value="1" />
                                         <Tab className="h-64 normal-case" label="Domicilio" value="2" />
                                         <Tab className="h-64 normal-case" label="Datos de contacto" value="3" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1">
                                     <Box sx={{ flexGrow: 1 }}>
