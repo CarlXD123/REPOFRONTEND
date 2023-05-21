@@ -17,7 +17,7 @@ import { Button, InputLabel, Modal, Tab, TextField, Tooltip } from '@mui/materia
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import { TabContext, TabList, TabPanel, Tabs} from '@material-ui/lab';
+import { TabContext, TabList, TabPanel} from '@material-ui/lab';
 import PersonSearchRoundedIcon from '@mui/icons-material/PersonSearchRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -612,12 +612,12 @@ export default function TbPersonal({ texto, opcion }: any) {
             <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.5rem" }} >Detalles del empleado</InputLabel >
             <TabContext value={values} >
               <Box>
-                 <Tabs scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
+                 <TabList scrollButtons="auto" variant="scrollable" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
                   <Tab className="h-64 normal-case" label="Datos personales" value="1" />
                   <Tab className="h-64 normal-case" label="Domicilio" value="2" />
                   <Tab className="h-64 normal-case" label="Profesión" value="3" />
                   <Tab className="h-64 normal-case" label="Usuario" value="4" />
-                </Tabs>
+                </TabList>
               </Box>
               <TabPanel value="1">
                 <Grid container style={{ alignItems: "center" }}>
