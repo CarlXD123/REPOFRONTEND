@@ -234,6 +234,7 @@ export default function TbCitas({ texto, opcion }: any) {
   const [abrircitaBorradaError, setAbrirCitaBorradaError] = React.useState<any>(false);
 
   const [rows2, setRows2] = React.useState<any>([]);
+  const [codigoapilis, setCodigoApilis] = React.useState<any>([]);
 
   const [nombreCompleto, setNombreCompleto] = React.useState<any>("");
   const [codigo, setCodigo] = React.useState<any>("");
@@ -350,7 +351,7 @@ export default function TbCitas({ texto, opcion }: any) {
   const handleCloseRangeDate = () => {
     setRangeDate(false);
   }
-
+  console.log(rowsExamenes)
   const handleCloseAbrirCitaBorradaError = () => {
     setAbrirCitaBorradaError(false);
   }
@@ -368,6 +369,7 @@ export default function TbCitas({ texto, opcion }: any) {
     setDescuento(obj.descuento)
     setPrecioFinal(obj.precioFinal)
     getAppointmentApi(obj.id).then((x: any) => {
+      console.log(x.client)
       getAgreementsListPriceApi(x.data.AgreementId).then((ag: any) => {
         getExamValuesApi(obj.id).then((y: any) => {
           let fila = [];
@@ -383,6 +385,11 @@ export default function TbCitas({ texto, opcion }: any) {
           setRowsExamenes(fila)
         });
       })
+      x.data.client?.forEach((d: any) => {
+        console.log(d.idmuestra)
+      });
+      setCodigoApilis(x.data.client.idmuestra)
+      console.log(x.client)
     })
   }
 
@@ -589,7 +596,7 @@ export default function TbCitas({ texto, opcion }: any) {
     a.fechaFiltro > b.fechaFiltro ? 1 : a.fecaFiltro < b.fechaFiltro ? -1 : 0)
   )
 
-
+  console.log(rows)
   console.log(rows2)
   console.log(busca)
   console.log(fecha)
@@ -659,13 +666,16 @@ export default function TbCitas({ texto, opcion }: any) {
             dni: d.client.dni,
             sexo: d.client.genderStr,
             medico: d.Doctor.name,
-            sede: d.headquarter.name
+            sede: d.headquarter.name,
+            apilis:ag.Exam.exam,
 
           })
         });
 
-        
         setRows(mapeado)
+
+        //setCodigoApilis(ag.Exam.exam)
+        
         //setRows2(mapeado)
       });
     } 
@@ -740,7 +750,7 @@ export default function TbCitas({ texto, opcion }: any) {
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
+  console.log(codigoapilis)
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -748,6 +758,8 @@ export default function TbCitas({ texto, opcion }: any) {
   let componente: any;
   return (
     <Box sx={{ width: '100%' }}>
+      <br></br>
+      <br></br>
       <Paper sx={{ width: '100%', mb: 50 }} className="card-table-general">
       <br></br>
     <div style={{ display: "flex" }}> 
@@ -1161,7 +1173,7 @@ export default function TbCitas({ texto, opcion }: any) {
                           </Grid>
                           <Grid item xs={3} ></Grid>
                           <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.3rem" }} ><b>Precio:</b></InputLabel >
+                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.3rem" }} ><b>CODIGO APILIS:</b></InputLabel >
                           </Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
@@ -1174,48 +1186,14 @@ export default function TbCitas({ texto, opcion }: any) {
 
                               <Grid item xs={3} ></Grid>
                               <Grid item xs={3} >
-                                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >S/. {rowExa.price}</InputLabel >
+                                <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >S/. {codigoapilis}</InputLabel >
                               </Grid>
                               <Grid item xs={3} ></Grid>
                             </Grid>
                           )
                         })}
                         <hr></hr>
-                        <Grid container item mt={2}>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} ><b>Precio Total:</b></InputLabel >
-                          </Grid>
-                          <Grid item xs={3} ></Grid>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >{precio}</InputLabel >
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
-                        </Grid>
-
-                        <Grid container item mt={2}>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} ><b>Descuento:</b></InputLabel >
-                          </Grid>
-                          <Grid item xs={3} ></Grid>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1rem" }} >{descuento}</InputLabel >
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
-                        </Grid>
-
-                        <Grid container item mt={2}>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} ><b>Total Final:</b></InputLabel >
-                          </Grid>
-                          <Grid item xs={3} ></Grid>
-                          <Grid item xs={3} >
-                            <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.1rem" }} ><b>{precioFinal}</b></InputLabel >
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
-                        </Grid>
+                    
                       </Box>
                     </div>
                   </Grid>
@@ -1460,4 +1438,5 @@ export default function TbCitas({ texto, opcion }: any) {
     </Box >
   );
 }
+
 
