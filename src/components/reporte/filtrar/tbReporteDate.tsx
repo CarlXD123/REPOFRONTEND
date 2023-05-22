@@ -56,7 +56,7 @@ export default function TbReporteDate() {
         <Contenido>
             <Grid container>
                 <Grid container item xs={12} spacing={2} style={{ alignItems: "center" }}>
-                    <Grid item xs={4}>
+                    <Grid item xs={8}>
                         <Link to={"/apps/report/exam"}>
                             <div style={{ display: "flex", alignItems: "center" }} >
                                 <KeyboardBackspaceRoundedIcon style={{ color: "white", fontSize: "1.3rem", cursor: "pointer" }}></KeyboardBackspaceRoundedIcon>
