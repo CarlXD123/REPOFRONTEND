@@ -688,11 +688,7 @@ export default function TbRegPersonal() {
             errorEspecialidad()
             return;
         }
-        if (descripcionEspecialidad == "") {
-            //alert("Ingrese descripcion");
-            errorDescripcionEspecialidad()
-            return;
-        }
+       
         saveSpecialityApi({
             description: descripcionEspecialidad,
             name: nombreEspecialidad
@@ -749,11 +745,7 @@ export default function TbRegPersonal() {
             errorNombreCargo()
             return;
         }
-        if (descripcionCargo == "") {
-            //alert("Ingrese descripcion");
-            errorDescripcionCargo()
-            return;
-        }
+     
         saveTypeEmployeeApi({
             description: descripcionCargo,
             name: nombreCargo
@@ -809,10 +801,7 @@ export default function TbRegPersonal() {
             errorProfesion()
             return;
         }
-        if (descripcionProfesion == "") {
-            errorDescripcionProfesion()
-            return;
-        }
+    
         saveProfessionApi({
             description: descripcionProfesion,
             name: nombreProfesion
@@ -877,10 +866,7 @@ export default function TbRegPersonal() {
             errorNombreColegiatura()
             return;
         }
-        if (descripcionColegiatura == "") {
-            errorDescripcionColegiatura()
-            return;
-        }
+      
         saveTuitionApi({
             description: descripcionColegiatura,
             name: nombreColegiatura
