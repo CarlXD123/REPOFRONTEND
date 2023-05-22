@@ -483,6 +483,8 @@ export default function TbPersonal({ texto, opcion }: any) {
   };
   return (
     <Box sx={{ width: '100%' }}>
+      <br></br>
+      <br></br>
      <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
