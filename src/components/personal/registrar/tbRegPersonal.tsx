@@ -5,8 +5,8 @@ import { Contenido } from "../../Home";
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-import TabPanel from '@material-ui/lab/TabPanel';
 import { Tabs } from '@mui/material';
+import TabPanel from '@material-ui/lab/TabPanel';
 import { getDistrictsForProvince, getHeadquartersAllApi, getPagedTypeDocsApi, getProfessionsAllApi, getProvincesForRegion, getRegionsApi, getRolesApi, getSpecialitiesApi, getTuitionsApi, getTypeDocsApi, getTypeEmployeesApi, saveEmployeeApi, saveProfessionApi, saveSpecialityApi, saveTuitionApi, saveTypeEmployeeApi } from "../../../api";
 import { civilStatus, genders, typeDirections } from "../../../constant";
 import { Link } from "react-router-dom";
@@ -745,7 +745,7 @@ export default function TbRegPersonal() {
             errorNombreCargo()
             return;
         }
-     
+       
         saveTypeEmployeeApi({
             description: descripcionCargo,
             name: nombreCargo
@@ -801,7 +801,7 @@ export default function TbRegPersonal() {
             errorProfesion()
             return;
         }
-    
+     
         saveProfessionApi({
             description: descripcionProfesion,
             name: nombreProfesion
@@ -866,7 +866,7 @@ export default function TbRegPersonal() {
             errorNombreColegiatura()
             return;
         }
-      
+       
         saveTuitionApi({
             description: descripcionColegiatura,
             name: nombreColegiatura
@@ -878,6 +878,7 @@ export default function TbRegPersonal() {
                 setDescripcionColegiatura("");
                 getTuitionsApi().then((ag: any) => {
                     setColegiatura1List(ag.data);
+                    setColegiatura2List(ag.data);
                 });
             } else {
                 guardarColegiaturaError()
