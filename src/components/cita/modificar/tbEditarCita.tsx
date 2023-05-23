@@ -1026,6 +1026,8 @@ export default function TbEditarCita() {
                 </Grid>
                 <br></br>
                 <div>
+                    <br></br>
+                    <br></br>
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                       <Paper sx={{ width: '100%', mb: 20 }}>
                         <div>
