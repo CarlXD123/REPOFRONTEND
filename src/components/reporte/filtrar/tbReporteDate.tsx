@@ -70,6 +70,8 @@ export default function TbReporteDate() {
             </Grid>
             <br></br>
             <div>
+                <br></br>
+                <br></br>
                 <TbCitasDate />
             </div>
 
