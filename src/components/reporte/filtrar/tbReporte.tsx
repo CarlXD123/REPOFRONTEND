@@ -24,6 +24,8 @@ export default function TbReporte() {
     return (
         <Grid container >
             <Box sx={{ width: '100%' }}>
+                <br></br>
+                <br></br>
                 <Paper sx={{ width: '100%', borderRadius: "12px", overflowY: "scroll", maxHeight: "480px" }} className="card-table-general" >
                     <Grid container spacing={1} mt={2.5}>
                         <Grid item xs={0.5} mt={2.5}></Grid>
