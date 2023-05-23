@@ -158,6 +158,8 @@ export default function TbEditConvenios() {
                 </Grid>
                 <br></br>
                 <div>
+                    <br></br>
+                    <br></br>
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2} >
