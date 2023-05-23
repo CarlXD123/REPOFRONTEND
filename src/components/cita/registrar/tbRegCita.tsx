@@ -1903,10 +1903,29 @@ export default function TbRegCita() {
                         keepMounted
                         open={abrirBuscarPaciente}
                         onClose={handleCloseBuscarPaciente}
+                        style={{ overflowY: "scroll" }}
                         aria-labelledby="keep-mounted-modal-title"
                         aria-describedby="keep-mounted-modal-description"
                     >
                         <Box sx={style} className="card-table-general">
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
                             <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Buscar Paciente</InputLabel >
                             <Grid container item mt={2.5} spacing={2}>
                                 <Grid item xs={6} >
@@ -1926,21 +1945,24 @@ export default function TbRegCita() {
                                 </Grid>
                                 
                             </Grid>
-
+                            <br></br>
+                           
                             <Grid container spacing={2} mt={0.5}>
                                     <Grid container item md={12}>
                                        <div style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.8rem" }} >Pacientes encontrados</div>
                                     </Grid>
                             </Grid>
+                            <br></br>
+                           
                             <Grid container spacing={2} mt={0.5}>
                                              <Grid container item mt={2.5}>
                                                <Grid item xs={12}>
                                                 <Box sx={{ width: '100%' }}>
                                                     <Paper sx={{ width: '100%', mb: 10, borderRadius: "12px" }} className="card-table-general">
-                                                        <TableContainer>
+                                                        <TableContainer style={{  maxHeight: 440, overflowY: "scroll" }} >
                                                             <Table
                                                                 sx={{ minWidth: 750 }}
-                                                                aria-labelledby="tableTitle"
+                                                                aria-labelledby="tableTitle" 
                                                                 size={'medium'}
                                                             >
                                                                 <EnhancedTableHeadBuscar
