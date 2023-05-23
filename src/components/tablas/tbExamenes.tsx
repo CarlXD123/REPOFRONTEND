@@ -13,7 +13,6 @@ import { visuallyHidden } from '@mui/utils';
 import { getFilterExamApi, getPagedExaminationsApi, deleteExaminationApi } from '../../api';
 import { Button, Grid, InputLabel, Modal, Tab, TextField, Tooltip } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
-import { Tabs } from '@mui/material';
 import { Link } from 'react-router-dom';
 import PlagiarismRoundedIcon from '@mui/icons-material/PlagiarismRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
@@ -372,6 +371,8 @@ export default function TbExamenes({ busquedaex }: any) {
   };
   return (
     <Box sx={{ width: '100%' }}>
+      <br></br>
+      <br></br>
       <Paper sx={{ width: '100%', mb: 60 }} className="card-table-general">
         <TableContainer>
           <Table
@@ -493,12 +494,12 @@ export default function TbExamenes({ busquedaex }: any) {
           <Box sx={style}>
             <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "400", fontSize: "1.5rem" }} >Detalles del examen</InputLabel >
             <TabContext value={values} >
-              <Box>
-                <Tabs value={values} scrollButtons="auto" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
+              <Box >
+                <TabList scrollButtons="auto" indicatorColor="primary" textColor="primary" onChange={handleChangeValor}  >
                   <Tab className="h-64 normal-case" label="Datos básicos" value="1" />
                   <Tab className="h-64 normal-case" label="Valores del grupo" value="2" />
                   <Tab className="h-64 normal-case" label="Dátos técnicos" value="3" />
-                </Tabs>
+                </TabList>
               </Box>
               <TabPanel value="1">
                 <Grid container style={{ alignItems: "center" }}>
