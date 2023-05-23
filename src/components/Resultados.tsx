@@ -123,6 +123,9 @@ class Resultados extends React.Component<{ navigate: NavigateFunction }, any>{
                     <br></br>
                     <br></br>
                     <div>
+                    <br></br>
+                    <br></br>
+                    <br></br>
                         <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }} className="card-table-resultados">
 
                             <Tabs value={this.state.tabValue} onChange={this.handleChangeTab}
