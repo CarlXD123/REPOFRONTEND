@@ -969,6 +969,8 @@ export default function TbModificarPersonal() {
                 </Grid>
                 <br></br>
                 <div>
+                    <br></br>
+                    <br></br>
                     <CardContent style={{ backgroundColor: "white", borderRadius: "12px" }}>
                         <div>
                             <TabContext value={values}>
