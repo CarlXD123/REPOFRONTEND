@@ -22,16 +22,16 @@ export default function TbReporte() {
    
     let componente: any;
     return (
-        <Grid container >
+        <Grid container className='tabla-componente card-table-examfinish contenedor-tabla-apilis contenedor-tabla-apilis2' >
             <Box sx={{ width: '100%' }}>
                 <br></br>
                 <br></br>
-                <Paper sx={{ width: '100%', borderRadius: "12px", overflowY: "scroll", maxHeight: "480px" }} className="card-table-general" >
+                <Paper sx={{ width: '100%', borderRadius: "12px", overflowY: "scroll", maxHeight: "480px" }} className="card-table-general contenedor-tabla-apilis2" >
                     <Grid container spacing={1} mt={2.5}>
                         <Grid item xs={0.5} mt={2.5}></Grid>
-                        <Grid container item xs={4} mt={2.5} spacing={1}>
+                        <Grid container item xs={12} sm={5} mt={2.5} spacing={1} className="contenedor-tabla-apilis2 contenedor-tabla-apilis">
                           <h3>REPORTE CITAS POR FECHA</h3>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className="contenedor-tabla-apilis2 contenedor-tabla-apilis">
                               <Link to={'/apps/report/exam/reportDate'}>
                                 <Tooltip title="Citas por fecha" followCursor>
                                     <Button fullWidth variant="contained" style={{ width: '20.5ch', height: '6.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.20rem" }} startIcon={<CalendarMonthIcon />}>
@@ -42,9 +42,9 @@ export default function TbReporte() {
                             </Grid>
                         </Grid>
 
-                        <Grid container item xs={5} mt={2.5} spacing={1}>
+                        <Grid container item xs={12} sm={5} mt={2.5} spacing={1} className="contenedor-tabla-apilis2 contenedor-tabla-apilis">
                           <h3>REPORTE DE EXAMENES REALIZADOS </h3>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className="contenedor-tabla-apilis2 contenedor-tabla-apilis">
                               <Link to={'/apps/report/exam/reportExamFin'}>
                                 <Tooltip title="Examenes realizados" followCursor>
                                     <Button fullWidth variant="contained" style={{ width: '28.5ch', height: '6.4ch', backgroundColor: "rgb(0 85 169)", color: "white", fontFamily: "Quicksand", fontWeight: "900", fontSize: "1.20rem" }} startIcon={<CalendarMonthIcon />}>
