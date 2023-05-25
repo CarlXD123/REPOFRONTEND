@@ -89,7 +89,7 @@ export default function TbReportExamFinish() {
                 apP:d.client.lastNameP,
                 apM:d.client.lastNameM,
                 paciente: d.client.lastNameP + " " + d.client.lastNameM + "," + d.client.name,
-                precio: d.totalPrice == null ? "" : "S/. " + d.totalPrice,
+                precio: d.totalPrice == null ? "" : d.totalPrice,
                 descuento: d.discount == null ? "" : "S/. " + d.discount,
                 precioFinal: d.finalPrice == null ? "" : "S/. " + d.finalPrice,
     
@@ -998,10 +998,10 @@ export default function TbReportExamFinish() {
                             <Grid container mt={2.5} sx={{ placeContent: "center" }}>
                                 <InputLabel style={{ color: "black", fontFamily: "Quicksand", fontWeight: "600", fontSize: "1.8rem" }} >REPORTE DE EXAMENES REALIZADOS - RedLab Perú</InputLabel >
                             </Grid>
-                            <Grid container mt={2.5} sx={{ width: '900px'}}>
+                            <Grid container mt={2.5} sx={{ width: '920px'}}>
                             <Grid item xs={0.1} mt={1}></Grid>
-                                <Grid item xs={0.5} mt={2.5}>
-                                    <TableContainer id={"sheetjs"} sx={{width: "1200px"}}>
+                                <Grid item xs={0.9} mt={2.5}>
+                                    <TableContainer id={"sheetjs"} sx={{width: "1220px"}}>
                                         <Table sx={{ width: '200px' , borderTop: 1,  borderLeft: 1, borderRight: 1}}
                                             aria-labelledby="tableTitle"
                                             size={'medium'}>
@@ -1047,13 +1047,13 @@ export default function TbReportExamFinish() {
                                                     <TableCell  sx={{ minWidth: 20, borderTop: 1, borderBottom: 1}}
                                                         align="center"
                                                         style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.1rem" }}>
-                                                        Precios
+                                                        Precios (S/.)
                                                     </TableCell>
 
-                                                    <TableCell sx={{ minWidth: 20, borderTop: 1, borderBottom: 1}}
+                                                    <TableCell sx={{ minWidth: 29, borderTop: 1, borderBottom: 1}}
                                                         align="center"
                                                         style={{ color: "white", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.1em" }}>
-                                                        Total
+                                                        Total (S/.)
                                                     </TableCell>
 
                                                 </TableRow>
@@ -1167,12 +1167,12 @@ export default function TbReportExamFinish() {
                                                         style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.1rem" }}>
                                                         
                                                 </TableCell>
-                                                <TableCell sx={{ minWidth: 20, border: 1 }}
+                                                <TableCell sx={{ minWidth: 29, border: 1 }}
                                                         align="center"
                                                         style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.0rem" }}>
                                                          {"S/."+rowstotal}
                                                 </TableCell>
-                                                <TableCell sx={{ minWidth: 20, border: 1 }}
+                                                <TableCell sx={{ minWidth: 29, border: 1 }}
                                                         align="center"
                                                         style={{ color: "black", fontFamily: "Quicksand", fontWeight: "500", fontSize: "1.0rem" }}>
                                                          {"S/."+rowstotal}
